@@ -1,0 +1,348 @@
+// src/pages/SearchResultsPage.jsx
+import React, { useEffect, useState, useMemo } from "react";
+import debounce from "lodash.debounce"; // ensure `npm install lodash.debounce`
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import Header from "../../components/Header";
+import Container_NoGradient from "../../components/Container_NoGradient";
+import HotelCard from "./SubComponents/HotelCard";
+import styled from "styled-components";
+import FooterSection from "../Login/subcomponents/FooterSection";
+import { useHotelSearch } from "../../context/HotelSearchContext";
+import { toast, Toaster } from "react-hot-toast";
+
+// — Layout components —
+const TopBar = styled.div`
+  width: max-content;
+  background: ${({ theme }) => theme.colors.secondary};
+  padding: 1rem 2rem;
+  border-radius: 0.8rem;
+  box-shadow: 0 1px 3px ${({ theme }) => theme.colors.primary};
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) { width: 100%; }
+`;
+const Breadcrumb = styled.div`
+  width: 100%;
+  a { color: ${({ theme }) => theme.colors.primary}; text-decoration: none; margin: 0 0.5rem; }
+`;
+const FilterButton = styled.button`
+  display: none;
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) { display: block; }
+  background: ${({ theme }) => theme.colors.primary};
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+`;
+const ContentArea = styled.div`
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  margin-top: 1.5rem;
+`;
+const Sidebar = styled.aside`
+  width: 20%;
+  padding: 1rem;
+  border-radius: 0.8rem;
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) { display: none; }
+`;
+const Main = styled.main`
+  width: 80%;
+  padding: 1rem;
+  border-radius: 0.8rem;
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) { width: 100%; }
+`;
+
+// Pagination styles
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  width: 100%;
+   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) { width: 100%; flex-wrap: wrap; }
+`;
+const PageButton = styled.button`
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  background: ${({ theme, active }) => active ? theme.colors.primary : theme.colors.secondary};
+  color: ${({ theme, active }) => active ? '#fff' : theme.colors.primaryText};
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+`;
+const ModalOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 1000;
+`;
+const ModalContent = styled.div`
+  background: ${({ theme }) => theme.colors.mainBackground};
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  overflow-y: auto;
+  position: relative;
+`;
+const CloseModal = styled.button`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: ${({ theme }) => theme.fontSizes.large};
+  cursor: pointer;
+`;
+
+// — Filter controls —
+const FilterSection = styled.div`
+  margin-bottom: 1.5rem;
+  background: ${({ theme }) => theme.colors.cardColor};
+  border-radius: 10px;
+  padding: 1.7rem 1rem;
+`;
+const FilterTitle = styled.h4`
+  margin: 0 0 0.5rem;
+  font-size: ${({ theme }) => theme.fontSizes.small};
+  color: ${({ theme }) => theme.colors.primary};
+`;
+const CheckboxLabel = styled.label`
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: ${({ theme }) => theme.fontSizes.xsmall};
+  color: ${({ theme }) => theme.colors.primaryText};
+  cursor: pointer;
+`;
+const CheckboxInput = styled.input`
+  margin-right: 0.5rem;
+`;
+const RangeInput = styled.input`
+  width: 100%;
+`;
+const SortSelect = styled.select`
+  width: 100%;
+  padding: 0.5rem;
+  font-size: ${({ theme }) => theme.fontSizes.xsmall};
+  border-radius: 0.5rem;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+`;
+const SearchInput = styled.input`
+  width: 100%;
+  padding: 0.5rem;
+  font-size: ${({ theme }) => theme.fontSizes.xsmall};
+  border-radius: 0.5rem;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+`;
+const TypeSelect = styled.select`
+  width: 100%;
+  padding: 0.5rem;
+  font-size: ${({ theme }) => theme.fontSizes.xsmall};
+  border-radius: 0.5rem;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+`;
+const ClearFiltersButton = styled.button`
+  width: 100%;
+  background: ${({ theme }) => theme.colors.primary};
+  color: #fff;
+  border: none;
+  padding: 0.7rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: ${({ theme }) => theme.fontSizes.small};
+  margin-top: 1rem;
+`;
+
+// Mapping for accommodation types
+const typeOptions = [
+  { id: 1, label: "Hotel" },
+  { id: 2, label: "Apartment" },
+  { id: 3, label: "Hostel" },
+  { id: 4, label: "Resort" },
+  { id: 5, label: "Motel" },
+  { id: 6, label: "Bed And Breakfast" },
+  { id: 7, label: "Guest house" },
+  { id: 8, label: "Campground" },
+  { id: 9, label: "Capsule Hotel" },
+  { id: 10, label: "Farm stay" },
+  { id: 12, label: "Holiday Park" },
+  { id: 13, label: "Inn" },
+  { id: 14, label: "Lodge" },
+  { id: 15, label: "Self-Catering" },
+  { id: 16, label: "Vacation Rental" }
+];
+
+// Filters Component
+function Filters({
+  sortOption, onSortChange,
+  searchInput, onNameChange,
+  selectedStars, onStarChange,
+  nonRefundOnly, onNonRefundChange,
+  selectedType, onTypeChange,
+  onClear
+}) {
+  return (
+    <>
+      <FilterSection>
+        <FilterTitle>Sort by</FilterTitle>
+        <SortSelect value={sortOption} onChange={e => onSortChange(e.target.value)}>
+          <option value="">None</option>
+          <option value="price_asc">Price: Low → High</option>
+          <option value="price_desc">Price: High → Low</option>
+        </SortSelect>
+      </FilterSection>
+
+      <FilterSection>
+        <FilterTitle>Hotel Name</FilterTitle>
+        <SearchInput type="text" placeholder="Search hotel name" value={searchInput} onChange={onNameChange} />
+      </FilterSection>
+
+      <FilterSection>
+        <FilterTitle>Star Rating</FilterTitle>
+        {[5, 4, 3, 2, 1].map(star => (
+          <CheckboxLabel key={star}>
+            <CheckboxInput type="checkbox" checked={selectedStars.includes(star)} onChange={() => onStarChange(star)} />
+            {Array.from({ length: star }).map((_, i) => <span key={i}>★</span>)}
+          </CheckboxLabel>
+        ))}
+      </FilterSection>
+
+      <FilterSection>
+        <FilterTitle>Accommodation Type</FilterTitle>
+        <TypeSelect value={selectedType} onChange={e => onTypeChange(Number(e.target.value))}>
+          <option value="">All Types</option>
+          {typeOptions.map(opt => (<option key={opt.id} value={opt.id}>{opt.label}</option>))}
+        </TypeSelect>
+      </FilterSection>
+
+      <FilterSection>
+        <FilterTitle>Refundable Only</FilterTitle>
+        <CheckboxLabel>
+          <CheckboxInput type="checkbox" checked={nonRefundOnly} onChange={onNonRefundChange} />
+          Show only refundable
+        </CheckboxLabel>
+      </FilterSection>
+
+      <ClearFiltersButton onClick={onClear}>Clear All Filters</ClearFiltersButton>
+    </>
+  );
+}
+
+// Main Component
+export default function SearchResultsPage() {
+  const { hotelSearchData = [], filteringData, buyersGroupData, exchangeGroupData } = useHotelSearch();
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [sortOption, setSortOption] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [hotelNameFilter, setHotelNameFilter] = useState("");
+  const [selectedStars, setSelectedStars] = useState([]);
+  const [selectedType, setSelectedType] = useState(null);
+  const [nonRefundOnly, setNonRefundOnly] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const itemsPerPage = 15;
+
+  // 1) Guard: if we didn’t come from FilterPage, bounce back
+  useEffect(() => {
+    if (!location.state?.cameFromSearch) {
+      navigate("/search", { replace: true });
+    }
+  }, [location.state, navigate]);
+
+
+
+  // Debounce search
+  const debouncedFilter = useMemo(() => debounce(val => { setHotelNameFilter(val.toLowerCase()); setCurrentPage(1); }, 300), []);
+  const handleNameChange = e => { setSearchInput(e.target.value); debouncedFilter(e.target.value); };
+
+  // Star filter
+  const handleStarChange = star => { setSelectedStars(prev => prev.includes(star) ? prev.filter(s => s !== star) : [...prev, star]); setCurrentPage(1); };
+
+  // Type filter
+  const handleTypeChange = id => { setSelectedType(id); setCurrentPage(1); };
+
+  // Refund filter
+  const handleNonRefundChange = _ => { setNonRefundOnly(prev => !prev); setCurrentPage(1); };
+
+  // Sort
+  const handleSortChange = val => { setSortOption(val); setCurrentPage(1); };
+
+  // Clear all filters
+  const resetFilters = _ => { setSortOption(""); setSearchInput(""); setHotelNameFilter(""); setSelectedStars([]); setSelectedType(null); setNonRefundOnly(false); setCurrentPage(1); };
+
+  // Filter & sort logic
+  const filteredData = useMemo(() => {
+    let data = hotelSearchData
+      .filter(h => !hotelNameFilter || h.accommodationName.toLowerCase().includes(hotelNameFilter))
+      .filter(h => !selectedStars.length || selectedStars.includes(h.rating))
+      .filter(h => selectedType == null || h.accommodationType === selectedType)
+      .filter(h => !nonRefundOnly || h.rooms?.rateplans?.[0]?.NonRefundableRate === false);
+    if (sortOption === "price_asc") {
+      data = data.filter(h => h.rooms?.rateplans?.[0]?.TotalPrice != null)
+        .sort((a, b) => a.rooms.rateplans[0].TotalPrice - b.rooms.rateplans[0].TotalPrice);
+    } else if (sortOption === "price_desc") {
+      data = data.filter(h => h.rooms?.rateplans?.[0]?.TotalPrice != null)
+        .sort((a, b) => b.rooms.rateplans[0].TotalPrice - a.rooms.rateplans[0].TotalPrice);
+    }
+    return data;
+  }, [hotelSearchData, hotelNameFilter, selectedStars, selectedType, nonRefundOnly, sortOption]);
+
+  const cityName = filteringData.CityName;
+
+  // Prevent accidental refresh
+  useEffect(() => { const h = e => { e.preventDefault(); e.returnValue = ""; }; window.addEventListener("beforeunload", h); return () => window.removeEventListener("beforeunload", h); }, []);
+  // useEffect(() => { const h = e => { if (e.key === "F5" || (e.ctrlKey && /r/i.test(e.key))) { e.preventDefault(); toast.error("Search data will be lost if you refresh the page", { duration: 4000 }); } }; window.addEventListener("keydown", h); return () => window.removeEventListener("keydown", h); }, []);
+  useEffect(() => { const h = e => { if (e.key === "F5") { e.preventDefault(); toast.error("Search data will be lost if you refresh the page", { duration: 4000 }); } }; window.addEventListener("keydown", h); return () => window.removeEventListener("keydown", h); }, []);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const currentData = filteredData.slice(startIdx, startIdx + itemsPerPage);
+  const goToPage = pg => setCurrentPage(pg);
+
+  return (
+    <>
+      <Container_NoGradient>
+        <Toaster position="top-center" />
+        <Header />
+        <TopBar>
+          <Breadcrumb><Link to="/">Main Page</Link> &gt; <Link to="/search">Search</Link> &gt; {cityName}</Breadcrumb>
+          <FilterButton onClick={() => setFilterOpen(true)}>Filters</FilterButton>
+          <FilterButton onClick={resetFilters}>Reset Filters</FilterButton>
+        </TopBar>
+        <ContentArea>
+          <Sidebar>
+            <Filters
+              sortOption={sortOption}
+              onSortChange={handleSortChange}
+              searchInput={searchInput}
+              onNameChange={handleNameChange}
+              selectedStars={selectedStars}
+              onStarChange={handleStarChange}
+              nonRefundOnly={nonRefundOnly}
+              onNonRefundChange={handleNonRefundChange}
+              selectedType={selectedType}
+              onTypeChange={handleTypeChange}
+              onClear={resetFilters}
+            />
+          </Sidebar>
+          <Main>
+            <HotelCard hotelSearchData={currentData} buyersGroupData={buyersGroupData} exchangeGroupData={exchangeGroupData} />
+            <PaginationContainer>
+              <PageButton onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} active={false}>Prev</PageButton>
+              {Array.from({ length: totalPages }, (_, i) => (<PageButton key={i + 1} onClick={() => goToPage(i + 1)} active={currentPage === i + 1}>{i + 1}</PageButton>))}
+              <PageButton onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages} active={false}>Next</PageButton>
+            </PaginationContainer>
+          </Main>
+        </ContentArea>
+        {filterOpen && (<ModalOverlay><ModalContent><CloseModal onClick={() => setFilterOpen(false)}>✕</CloseModal><h2>Filters</h2><Sidebar style={{ display: "block", width: "100%" }}><Filters sortOption={sortOption} onSortChange={handleSortChange} searchInput={searchInput} onNameChange={handleNameChange} selectedStars={selectedStars} onStarChange={handleStarChange} nonRefundOnly={nonRefundOnly} onNonRefundChange={handleNonRefundChange} selectedType={selectedType} onTypeChange={handleTypeChange} onClear={resetFilters} /></Sidebar></ModalContent></ModalOverlay>)}
+      </Container_NoGradient>
+      <FooterSection />
+    </>
+  );
+}
