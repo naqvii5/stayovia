@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import logoSrc from "../../../assets/StayoViaLogo.png";
+import playStore from "../../../assets/playStore.png";
+import appStore from "../../../assets/appStore.png";
 
 import MC from "../../../assets/mastercard.svg";
 import UP from "../../../assets/unionpay.svg";
@@ -95,7 +97,12 @@ const LinkItem = styled.span`
     text-decoration: underline;
   }
 `;
-
+const AppIcons = styled.div`
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 0.5rem;
+`;
 const SocialIcons = styled.div`
   display: flex;
   gap: 0.75rem;
@@ -213,17 +220,44 @@ export default function FooterSection() {
       <FooterContent>
         <BrandColumn>
           <Logo src={logoSrc} alt="Logo" />
-          <FlexRow>
-            <Description>
-              Stayovia is a travel tech brand of Purple Technologies (Pvt) Ltd
-            </Description>
-            <SocialIcons>
-              <SocialIcon href="https://facebook.com" target="_blank"><FaFacebookF size={16} /></SocialIcon>
-              <SocialIcon href="https://tiktok.com" target="_blank"><FaTiktok size={16} /></SocialIcon>
-              <SocialIcon href="https://instagram.com" target="_blank"><FaInstagram size={16} /></SocialIcon>
-              <SocialIcon href="https://youtube.com" target="_blank"><FaYoutube size={16} /></SocialIcon>
-            </SocialIcons>
-          </FlexRow>
+          <div style={{ display: 'flex', flexDirection: "row", width: '100%', justifyContent: 'space-between' }}>
+
+            <div style={{ display: 'flex', flexDirection: "column" }}>
+              <Description>
+                Stayovia is a travel tech brand of Purple Technologies (Pvt) Ltd
+              </Description>
+              <SocialIcons>
+                <SocialIcon href="https://facebook.com" target="_blank"><FaFacebookF size={16} /></SocialIcon>
+                <SocialIcon href="https://tiktok.com" target="_blank"><FaTiktok size={16} /></SocialIcon>
+                <SocialIcon href="https://instagram.com" target="_blank"><FaInstagram size={16} /></SocialIcon>
+                <SocialIcon href="https://youtube.com" target="_blank"><FaYoutube size={16} /></SocialIcon>
+              </SocialIcons>
+            </div>
+            <AppIcons>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: "column", width: '100%' }}>
+                {/* <h3>Coming Soon</h3> */}
+                {/* <SocialIcon title="App Store (Coming Soon)"> */}
+                {/* <SiAppstore size={24} /> */}
+                <img style={{ width: '120px' }} src={appStore}></img>
+                {/* </SocialIcon> */}
+
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', flexDirection: "column", width: '100%' }}>
+                {/* <SocialIcon title="Play Store (Coming Soon)"> */}
+                {/* <SiGoogleplay size={24} /> */}
+                {/* <FaGooglePlay /> */}
+                <img style={{ width: '160px' }} src={playStore}></img>
+                {/* </SocialIcon> */}
+
+              </div>
+
+              {/* <SocialIcon title="Play Store (Coming Soon)">
+                <SiGoogleplay size={24} />
+              </SocialIcon>
+              <h3>Coming soon on App Store</h3> */}
+
+            </AppIcons>
+          </div>
         </BrandColumn>
       </FooterContent>
 
