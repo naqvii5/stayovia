@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import Slider from 'react-slick';
+import 'animate.css/animate.min.css';
+import { useInView } from 'react-intersection-observer';
 
 // Images
 import Islamabad1Img from '../../../assets/Islamabad1.jpeg';
@@ -55,7 +57,7 @@ const SlideImage = styled.img`
 
 // 2) Add a hover rule in Card that targets SlideImage:
 const Card = styled.div`
-  width: 30%;
+  width: 100%;
   aspect-ratio: 16 / 9;
   position: relative;
   border-radius: 16px;
@@ -145,6 +147,72 @@ const CircularButton = styled.button`
     opacity: 0.9;
   }
 `;
+// Add this BELOW your existing styled components:
+
+// placeholder wrapper to reserve the card’s space
+const LazyWrapper = styled.div`
+  width: 30%;
+  aspect-ratio: 16/9;
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    width: 90%;
+  }
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    width: 100%;
+    height: 200px;
+    aspect-ratio: unset;
+  }
+`;
+function LazyDestinationCard({ index, card }) {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.2,
+  });
+
+  // 0–2 slideDown, 3–5 slideUp
+  const animationClass =
+    index <= 2 ? 'animate__slideInUp' : 'animate__slideInUp';
+
+  return (
+    <LazyWrapper ref={ref}>
+      {inView && (
+        <Card
+          className={`animate__animated ${animationClass}`}
+          onClick={() => console.log(`Details: ${card.title}`)}
+        >
+          <CardRightSlider
+            {...{
+              dots: false,
+              arrows: false,
+              autoplay: card.images.length > 1,
+              infinite: card.images.length > 1,
+              speed: 500,
+              autoplaySpeed: 2500,
+              slidesToShow: 1,
+              slidesToScroll: 1,
+            }}
+          >
+            {card.images.map((imgSrc, idx) => (
+              <SlideWrapper key={idx}>
+                <SlideImage src={imgSrc} alt={`${card.title} ${idx + 1}`} />
+              </SlideWrapper>
+            ))}
+          </CardRightSlider>
+          <CardTitle>
+            {card.title}
+            <CircularButton
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log(`Go to: ${card.title}`);
+              }}
+            >
+              &gt;
+            </CircularButton>
+          </CardTitle>
+        </Card>
+      )}
+    </LazyWrapper>
+  );
+}
 
 export default function TopDestinationSection() {
   const cards = [
@@ -180,7 +248,7 @@ export default function TopDestinationSection() {
     <Container>
       <Heading>Top Destinations</Heading>
       <CardsGrid>
-        {cards.map((card, index) => {
+        {/* {cards.map((card, index) => {
           const isSingle = card.images.length === 1;
 
           const sliderSettings = {
@@ -197,6 +265,7 @@ export default function TopDestinationSection() {
           return (
             <Card
               key={index}
+              className={`animate__animated index 0 to 2 animate__slideInDown, index 3-5 animate__slideInUp`}
               onClick={() => console.log(`Details: ${card.title}`)}
             >
               <CardRightSlider {...sliderSettings}>
@@ -220,7 +289,11 @@ export default function TopDestinationSection() {
               </CardTitle>
             </Card>
           );
-        })}
+        })} */}
+
+        {cards.map((card, index) => (
+          <LazyDestinationCard key={index} index={index} card={card} />
+        ))}
       </CardsGrid>
     </Container>
   );

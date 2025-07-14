@@ -383,7 +383,7 @@ export default function FilterSection() {
   const [roomsInfo, setRoomsInfo] = useState([
     { label: 'Room 1', Adults: 1, Children: 0 },
   ]);
-  // eslint-disable-next-line no-unused-vars
+
   const [rating, setRating] = useState([]);
   const [freeCancellation, setFreeCancellation] = useState(false);
 
@@ -515,7 +515,8 @@ export default function FilterSection() {
             <FaHotel />
             <span>Hotels</span>
           </SelectedOption> */}
-        <Card>
+
+        <Card className="animate__animated animate__fadeIn">
           {/* use searchFilterBackdrop.webp from assests image background on card */}
           <div
             style={{

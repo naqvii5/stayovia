@@ -1,9 +1,10 @@
-import React from "react";
-import styled from "styled-components";
-import { useThemeContext } from "../../../theme/ThemeProvider";
-import beachImg from "../../../assets/beach1.jpeg";
-import qrCodeImg from "../../../assets/qr_dummy.png"; // Replace with real QR later
-
+import React from 'react';
+import styled from 'styled-components';
+// import { useThemeContext } from '../../../theme/ThemeProvider';
+import beachImg from '../../../assets/beach1.jpeg';
+import qrCodeImg from '../../../assets/qr_dummy.png'; // Replace with real QR later
+import 'animate.css/animate.min.css';
+import { useInView } from 'react-intersection-observer';
 const Container = styled.section`
   width: 100%;
   margin: 0 auto;
@@ -16,14 +17,11 @@ const Container = styled.section`
   }
 `;
 
-
-
-
 const ContentRow = styled.div`
   display: flex;
   width: 100%;
   border-radius: 40px;
-  background:${({ theme }) => theme.colors.primary};
+  background: ${({ theme }) => theme.colors.primary};
   // background: linear-gradient(
   //   to bottom,
   //   ${({ theme }) => theme.colors.secondary} 0%,
@@ -81,19 +79,18 @@ const QRColumn = styled.div`
 const AppTitle = styled.h2`
   font-family: ${({ theme }) => theme.fonts.primaryHeading};
   font-size: ${({ theme }) => theme.fontSizes.xlarge};
- color: white;
-   // color: ${({ theme }) => theme.colors.primaryText};
+  color: white;
+  // color: ${({ theme }) => theme.colors.primaryText};
   margin-bottom: 0.5rem;
   flex: 1; // take remaining space
   min-width: 200px; // optional, to keep it readable
 `;
 
-
 const AppDescription = styled.p`
   font-family: ${({ theme }) => theme.fonts.primaryText};
   font-size: ${({ theme }) => theme.fontSizes.small};
   // color: ${({ theme }) => theme.colors.primaryText};
-   color: white;
+  color: white;
   line-height: 1.6;
 `;
 
@@ -101,7 +98,7 @@ const QRInstruction = styled.p`
   font-family: ${({ theme }) => theme.fonts.primaryText};
   font-size: ${({ theme }) => theme.fontSizes.xsmall};
   // color: ${({ theme }) => theme.colors.secondaryText};
- color: white;
+  color: white;
 `;
 
 const QRCode = styled.img`
@@ -126,34 +123,60 @@ const Image = styled.img`
   // border-color: ${({ theme }) => theme.colors.primaryHeadingRevert};
   object-fit: cover;
 `;
+// lazy wrappers reserve space so layout won’t collapse
+const LazyLeft = styled.div`
+  flex: 0 0 60%;
+  min-height: 240px; /* adjust to your panel’s expected height */
+  position: relative;
+`;
+
+const LazyRight = styled.div`
+  flex: 0 0 40%;
+  min-height: 240px;
+  position: relative;
+`;
+
 export default function AboutSection() {
-  const { mode } = useThemeContext();
+  // const { mode } = useThemeContext();
+  const { ref: leftRef, inView: leftIn } = useInView({
+    triggerOnce: true,
+    threshold: 0.2,
+  });
+  const { ref: rightRef, inView: rightIn } = useInView({
+    triggerOnce: true,
+    threshold: 0.2,
+  });
 
   return (
     <Container>
       <ContentRow>
-        <LeftPanel>
-          <QRColumn>
-            <QRCode src={qrCodeImg} alt="QR Code" />
+        <LazyLeft ref={leftRef}>
+          {leftIn && (
+            <LeftPanel className={`animate__animated animate__backInLeft`}>
+              <QRColumn>
+                <QRCode src={qrCodeImg} alt="QR Code" />
+              </QRColumn>
 
-          </QRColumn>
+              <AppTitle>Go further with the Stayovia app</AppTitle>
+              <QRInstruction>
+                Scan the QR code with your device camera and download our app
+              </QRInstruction>
+              <AppDescription>
+                Save on select hotels and earn OneKeyCash on bookings in the
+                app. Our app deals help you to save on trips so you can travel
+                more and manage it all on the go.
+              </AppDescription>
+            </LeftPanel>
+          )}
+        </LazyLeft>
 
-          <AppTitle>Go further with the Stayovia app</AppTitle>
-          <QRInstruction>
-            Scan the QR code with your device camera and download our app
-          </QRInstruction>
-          <AppDescription>
-            Save on select hotels and earn OneKeyCash on bookings in the app.
-            Our app deals help you to save on trips so you can travel more and
-            manage it all on the go.
-          </AppDescription>
-        </LeftPanel>
-
-
-
-        <RightPanel>
-          <Image src={beachImg} alt="Beach view" />
-        </RightPanel>
+        <LazyRight ref={rightRef}>
+          {rightIn && (
+            <RightPanel className={`animate__animated animate__backInRight`}>
+              <Image src={beachImg} alt="Beach view" />
+            </RightPanel>
+          )}
+        </LazyRight>
       </ContentRow>
     </Container>
   );

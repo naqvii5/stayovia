@@ -493,10 +493,10 @@ export default function SearchResultsPage() {
   }, []);
 
   // Pagination
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const startIdx = (currentPage - 1) * itemsPerPage;
-  const currentData = filteredData.slice(startIdx, startIdx + itemsPerPage);
-  const goToPage = (pg) => setCurrentPage(pg);
+  // const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  // const startIdx = (currentPage - 1) * itemsPerPage;
+  // const currentData = filteredData.slice(startIdx, startIdx + itemsPerPage);
+  // const goToPage = (pg) => setCurrentPage(pg);
   const [displayedData, setDisplayedData] = useState([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
@@ -572,7 +572,9 @@ export default function SearchResultsPage() {
               // exchangeGroupData={exchangeGroupData}
             /> */}
             <HotelCardNew hotelSearchData={displayedData} />
-            {isLoadingMore && <Spinner />}
+            <div style={{ textAlign: 'center', height: '50px' }}>
+              {isLoadingMore && <Spinner />}
+            </div>
             <div ref={loadMoreRef}></div>
             {/* <PaginationContainer>
               <PageButton onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} active={false}>Prev</PageButton>
