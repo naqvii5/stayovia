@@ -65,6 +65,21 @@ function GuestForm({ numberOfGuests, submitForm }) {
                 <h2>Guest Contact</h2>
 
                 <Row>
+
+                    <Field>
+                        <h4>First Name</h4>
+                        <Input type="input" {...register("email")} />
+                        {/* {errors.email && <Error>{errors.email.message}</Error>} */}
+                    </Field>
+                    <Field>
+                        <h4>Last Name</h4>
+                        <Input type="input" {...register("email")} />
+                        {/* {errors.email && <Error>{errors.email.message}</Error>} */}
+                    </Field>
+
+                </Row>
+                <Row>
+
                     <Field>
                         <h4>Email</h4>
                         <Input type="email" {...register("email")} />
@@ -168,7 +183,7 @@ function GuestForm({ numberOfGuests, submitForm }) {
             </LeftColumnCards>
 
             {/* Payment Method Toggle */}
-            <ToggleWrapper>
+            {/* <ToggleWrapper>
                 <ToggleButton
                     type="button"
                     isActive={paymentMethod === "card"}
@@ -183,9 +198,21 @@ function GuestForm({ numberOfGuests, submitForm }) {
                 >
                     Credit
                 </ToggleButton>
-            </ToggleWrapper>
-
-            {
+            </ToggleWrapper> */}
+            <MyButton
+                type="submit"
+                bgColor={({ theme }) => theme.colors.primary}
+                // textColor={({ theme }) => theme.colors.primary}
+                textColor='#FFFF'
+                fontSize={({ theme }) => theme.fontSizes.xsmall}
+                padding="10px"
+                borderRadius="10px"
+                width="100%"
+                disabled={!hasPermission("booking.create")}
+            >
+                Proceed to payment
+            </MyButton>
+            {/* {
                 paymentMethod == 'card' ? (
 
                     <MyButton
@@ -212,7 +239,7 @@ function GuestForm({ numberOfGuests, submitForm }) {
                         {hasPermission("booking.create") ? "Proceed to Confirmation" : "You do not have permission to book"}
                     </MyButton>)
 
-            }
+            } */}
         </Form>
     );
 }
@@ -228,7 +255,7 @@ const Form = styled.form`
 `;
 
 const LeftColumnCards = styled.div`
-  padding: 2rem;
+  padding: 5rem 2rem;
   background: ${({ theme }) => theme.colors.cardColor};
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border-radius: 1rem;

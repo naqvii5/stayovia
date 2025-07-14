@@ -5,13 +5,16 @@ import { useTheme } from 'styled-components';
 import { MyButton } from '../../../components/MyButton';
 import { useNavigate } from 'react-router-dom';
 
-function OrderDetail({ cart, grandTotal, isCheckOut = false, cartDetails }) {
+function OrderDetail2({
+  cart,
+  grandTotal,
+  grandTotalWithBuyersGroup,
+  isCheckOut = false,
+  cartDetails,
+}) {
   const navigate = useNavigate();
   const styledTheme = useTheme();
-  const [
-    // modalOpen,
-    setModalOpen,
-  ] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   function confirmOrder() {
     localStorage.setItem('cart', JSON.stringify(cart));
@@ -28,26 +31,36 @@ function OrderDetail({ cart, grandTotal, isCheckOut = false, cartDetails }) {
       <RightColumn>
         <CartBox>
           <HeaderBox>
-            <h1>Confirmation Reservation</h1>
+            <h1>Confirmation View</h1>
           </HeaderBox>
 
+          <ItemBoxHeader theme={styledTheme}>
+            <h2>Room</h2>
+            <h2>Quantity</h2>
+            <h2>Price + Tax </h2>
+            <h2>Sub Total</h2>
+          </ItemBoxHeader>
           {cart.map((item, idx) => (
             <ItemBox key={idx} theme={styledTheme}>
               <div>
                 <h2>
-                  {idx + 1} {item.roomTypeName}
+                  {idx + 1}
+                  {':'}
+                  {item.roomTypeName}
                 </h2>
               </div>
               <div>
                 <h3>Room(s) x {item.rooms}</h3>
               </div>
               <h3>
-                PKR {item.totalPriceExclTax.toLocaleString()} + PKR{' '}
-                {item.tax.toLocaleString()} Tax
+                PKR {(item.priceWithBuyersGroup - item.tax).toLocaleString()} +
+                PKR {item.tax.toLocaleString()} Tax
               </h3>
               <div>
                 <h3 style={{ color: styledTheme.colors.secondary }}>
-                  PKR {(item.price * item.rooms).toLocaleString()} (Sub Total)
+                  PKR{' '}
+                  {(item.priceWithBuyersGroup * item.rooms).toLocaleString()}{' '}
+                  (Sub Total)
                 </h3>
               </div>
             </ItemBox>
@@ -63,7 +76,7 @@ function OrderDetail({ cart, grandTotal, isCheckOut = false, cartDetails }) {
             >
               <h2 style={{ color: styledTheme.colors.primary }}>GRAND TOTAL</h2>
               <h2 style={{ color: styledTheme.colors.secondary }}>
-                PKR {grandTotal.toLocaleString()}
+                PKR {grandTotalWithBuyersGroup.toLocaleString()}
               </h2>
             </div>
           </TotalBox>
@@ -119,7 +132,7 @@ function OrderDetail({ cart, grandTotal, isCheckOut = false, cartDetails }) {
   );
 }
 
-export default OrderDetail;
+export default OrderDetail2;
 
 // Styled Components
 const RightColumn = styled.div`
@@ -161,16 +174,37 @@ const HeaderBox = styled.div`
 const ItemBox = styled(Box)`
   margin-bottom: 1rem;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
   border-top: 1px solid ${({ theme }) => theme.colors.primary};
   border-bottom: 1px solid ${({ theme }) => theme.colors.primary};
-  //   border-radius: 5px;
   // background: ${({ theme }) => theme.colors.cardColor2};
   padding: 10px 50px;
   gap: 10px;
   h2 {
     color: ${({ theme }) => theme.colors.primary};
     margin: 0;
+  }
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    flex-direction: column;
+  }
+`;
+const ItemBoxHeader = styled(Box)`
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  //   border-top: 1px solid ${({ theme }) => theme.colors.primary};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.primary};
+  // background: ${({ theme }) => theme.colors.cardColor2};
+  padding: 10px 50px;
+  gap: 10px;
+  h2 {
+    color: ${({ theme }) => theme.colors.primary};
+    margin: 0;
+  }
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    display: none;
   }
 `;
 

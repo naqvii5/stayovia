@@ -1,19 +1,19 @@
 // src/pages/SubComponents/HotelCard.jsx
-import React from "react";
-import styled from "styled-components";
-import beamImg from "../../../assets/beach.jpeg"; // placeholder
-import mainImg from "../../../assets/main.jpeg"; // placeholder
-import roomImg from "../../../assets/roomImg.jpeg"; // placeholder
-import Ribbon from "../../../assets/ribbon.png"; // rating ribbon image
-import { useThemeContext } from "../../../theme/ThemeProvider";
+import React from 'react';
+import styled from 'styled-components';
+import beamImg from '../../../assets/beach.jpeg'; // placeholder
+import mainImg from '../../../assets/main.jpeg'; // placeholder
+import roomImg from '../../../assets/roomImg.jpeg'; // placeholder
+import Ribbon from '../../../assets/ribbon.png'; // rating ribbon image
+import { useThemeContext } from '../../../theme/ThemeProvider';
 
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import toast from "react-hot-toast";
-import { specificHotelSearch } from "../../../api/specificHotelSearch";
-import { useHotelSearch } from "../../../context/HotelSearchContext";
-import { MyButton } from "../../../components/MyButton";
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import toast from 'react-hot-toast';
+import { specificHotelSearch } from '../../../api/specificHotelSearch';
+import { useHotelSearch } from '../../../context/HotelSearchContext';
+import { MyButton } from '../../../components/MyButton';
 
 // —————————————————————————————————————————————————————————————
 // Card container: column on mobile, row (30/70) on tablet+
@@ -135,7 +135,7 @@ const DetailsCol = styled.div`
   justify-content: space-between;
   align-items: center;
   background: ${({ theme }) =>
-    theme.mode === "light" ? "#f5f5f5" : theme.colors.mainBackground};
+    theme.mode === 'light' ? '#f5f5f5' : theme.colors.mainBackground};
   padding: 10px;
   border-radius: 0.8rem;
 `;
@@ -152,7 +152,6 @@ const ShowButtonCol = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-
 `;
 const Stars = styled.div`
   color: #fbc02d; /* gold */
@@ -167,73 +166,74 @@ const ShowButton = styled.button`
   cursor: pointer;
 `;
 
-export default function HotelCard({ hotelSearchData, buyersGroupData, exchangeGroupData }) {
+export default function HotelCard({ hotelSearchData }) {
   const { mode } = useThemeContext();
-  const { filteringData, setSpecificHotelSearchData, setBuyersGroupData } = useHotelSearch();
+  const { filteringData, setSpecificHotelSearchData, setBuyersGroupData } =
+    useHotelSearch();
   // const baseImageURL = 'https://stagingconnect.purpletech.ai/storage/'
-  const baseImageURL = 'https://connect.purpletech.ai/storage/'
+  const baseImageURL = 'https://connect.purpletech.ai/storage/';
+  // const baseImageURL = 'http://192.168.0.148:8002/storage/';
   // const baseImageURL = 'http://192.168.0.148:8001/storage/'
   // Mapping for accommodation types
   const typeOptions = [
-    { id: 1, label: "Hotel" },
-    { id: 2, label: "Apartment" },
-    { id: 3, label: "Hostel" },
-    { id: 4, label: "Resort" },
-    { id: 5, label: "Motel" },
-    { id: 6, label: "Bed And Breakfast" },
-    { id: 7, label: "Guest house" },
-    { id: 8, label: "Campground" },
-    { id: 9, label: "Capsule Hotel" },
-    { id: 10, label: "Farm stay" },
-    { id: 12, label: "Holiday Park" },
-    { id: 13, label: "Inn" },
-    { id: 14, label: "Lodge" },
-    { id: 15, label: "Self-Catering" },
-    { id: 16, label: "Vacation Rental" }
+    { id: 1, label: 'Hotel' },
+    { id: 2, label: 'Apartment' },
+    { id: 3, label: 'Hostel' },
+    { id: 4, label: 'Resort' },
+    { id: 5, label: 'Motel' },
+    { id: 6, label: 'Bed And Breakfast' },
+    { id: 7, label: 'Guest house' },
+    { id: 8, label: 'Campground' },
+    { id: 9, label: 'Capsule Hotel' },
+    { id: 10, label: 'Farm stay' },
+    { id: 12, label: 'Holiday Park' },
+    { id: 13, label: 'Inn' },
+    { id: 14, label: 'Lodge' },
+    { id: 15, label: 'Self-Catering' },
+    { id: 16, label: 'Vacation Rental' },
   ];
-  function applyExchange(ratePlanPrice) {
-    // console.log('ratePlanPrice', ratePlanPrice)
-    // console.log('buyersGroupData', buyersGroupData)
-    // console.log('exchangeGroupData', exchangeGroupData.rate)
-    // console.log('ratePlanPrice * exchangeGroupData.rate', ratePlanPrice * exchangeGroupData.rate)
-    return Number(ratePlanPrice * exchangeGroupData.rate)
-  }
-  function applyMarginFunc(hotel) {
-    const rp = hotel?.rooms?.rateplans?.[0];
-    if (!rp) return false;
+  // function applyExchange(ratePlanPrice) {
+  // console.log('ratePlanPrice', ratePlanPrice)
+  // console.log('buyersGroupData', buyersGroupData)
+  // console.log('exchangeGroupData', exchangeGroupData.rate)
+  // console.log('ratePlanPrice * exchangeGroupData.rate', ratePlanPrice * exchangeGroupData.rate)
+  // return Number(ratePlanPrice * exchangeGroupData.rate)
+  // }
+  // function applyMarginFunc(hotel) {
+  //   const rp = hotel?.rooms?.rateplans?.[0];
+  //   if (!rp) return false;
 
-    // BE is sending NonRefundableRate = false when room is refundable,
-    // true when non‐refundable
-    const isRoomNonRefundable = Boolean(rp.NonRefundableRate);
-    // console.log('first', buyersGroupData)
-    if (buyersGroupData?.type) {
-      const buyersGrouptype = buyersGroupData?.type.toLowerCase();
-      const isForRefundable = buyersGrouptype.includes('refundable');
-      const isForNonRefundable =
-        buyersGrouptype.includes('non-refundable') || buyersGrouptype.includes('non refundable');
+  //   // BE is sending NonRefundableRate = false when room is refundable,
+  //   // true when non‐refundable
+  //   const isRoomNonRefundable = Boolean(rp.NonRefundableRate);
+  //   // console.log('first', buyersGroupData)
+  //   if (buyersGroupData?.type) {
+  //     const buyersGrouptype = buyersGroupData?.type.toLowerCase();
+  //     const isForRefundable = buyersGrouptype.includes('refundable');
+  //     const isForNonRefundable =
+  //       buyersGrouptype.includes('non-refundable') || buyersGrouptype.includes('non refundable');
 
-      // 1) applies to both kinds
-      if (isForRefundable && isForNonRefundable) {
-        return true;
-      }
+  //     // 1) applies to both kinds
+  //     if (isForRefundable && isForNonRefundable) {
+  //       return true;
+  //     }
 
-      // 2) applies only to refundable AND if  room is refundable
-      if (isForRefundable && !isRoomNonRefundable) {
-        return true;
-      }
+  //     // 2) applies only to refundable AND if  room is refundable
+  //     if (isForRefundable && !isRoomNonRefundable) {
+  //       return true;
+  //     }
 
-      // 3) applies only to non‐refundable AND if  room is non‐refundable
-      if (isForNonRefundable && isRoomNonRefundable) {
-        return true;
-      }
+  //     // 3) applies only to non‐refundable AND if  room is non‐refundable
+  //     if (isForNonRefundable && isRoomNonRefundable) {
+  //       return true;
+  //     }
 
-      // otherwise, do not apply margin
-      return false;
-    } else {
-      return false;
-    }
-  }
-
+  //     // otherwise, do not apply margin
+  //     return false;
+  //   } else {
+  //     return false;
+  //   }
+  // }
 
   // console.log('hotelSearchData', hotelSearchData)
   // Custom arrows
@@ -254,8 +254,8 @@ export default function HotelCard({ hotelSearchData, buyersGroupData, exchangeGr
       !filteringData.GuestQuantity ||
       !id
     ) {
-      toast.error("Data is missing!", {
-        style: { fontSize: "1.25rem", padding: "16px 24px" },
+      toast.error('Data is missing!', {
+        style: { fontSize: '1.25rem', padding: '16px 24px' },
       });
       return;
     }
@@ -280,51 +280,50 @@ export default function HotelCard({ hotelSearchData, buyersGroupData, exchangeGr
 
     localStorage.setItem('payload', JSON.stringify(payload));
     // 3) kick off search
-    const toastId = toast.loading("Searching…", {
-      style: { fontSize: "1.25rem", padding: "16px 24px" },
+    const toastId = toast.loading('Searching…', {
+      style: { fontSize: '1.25rem', padding: '16px 24px' },
     });
 
     specificHotelSearch(payload)
       .then((response) => {
         setSpecificHotelSearchData(response.data);
-        setBuyersGroupData(response.buyerGroup)
+        // setBuyersGroupData(response.buyerGroup)
         // setBuyersGroupData(response.exchangeData)
         localStorage.setItem(
-          "specificHotelSearchData",
+          'specificHotelSearchData',
           JSON.stringify(response.data)
         );
-        localStorage.setItem(
-          "buyersGroupData",
-          JSON.stringify(response.buyerGroup)
-        );
-        localStorage.setItem(
-          "exchangeGroupData",
-          JSON.stringify(exchangeGroupData)
-        );
-
+        // localStorage.setItem(
+        //   "buyersGroupData",
+        //   JSON.stringify(response.buyerGroup)
+        // );
+        // localStorage.setItem(
+        //   "exchangeGroupData",
+        //   JSON.stringify(exchangeGroupData)
+        // );
 
         // dismiss loading toast
         toast.dismiss(toastId);
 
         if (response.status) {
-          toast.success("Data searched!", {
-            style: { fontSize: "1.25rem", padding: "16px 24px" },
+          toast.success('Data searched!', {
+            style: { fontSize: '1.25rem', padding: '16px 24px' },
           });
           // 5) navigate only *after* context has been updated
           // navigate("/search-results");
           // window.open(`/hotel-details/${id}`, "_blank");
-          window.open(`/hotel-details`, "_blank");
+          window.open(`/#/hotel-details`, '_blank');
         } else {
-          toast.error("Failed to load hotels", {
-            style: { fontSize: "1.25rem", padding: "16px 24px" },
+          toast.error('Failed to load hotels', {
+            style: { fontSize: '1.25rem', padding: '16px 24px' },
           });
         }
       })
       .catch((err) => {
-        console.error("Search API failed:", err);
+        console.error('Search API failed:', err);
         toast.dismiss(toastId);
-        toast.error("Error", {
-          style: { fontSize: "1.25rem", padding: "16px 24px" },
+        toast.error('Error', {
+          style: { fontSize: '1.25rem', padding: '16px 24px' },
         });
       });
   };
@@ -383,22 +382,24 @@ export default function HotelCard({ hotelSearchData, buyersGroupData, exchangeGr
   return (
     <>
       <>
-        {hotelSearchData.length > 0 ? (hotelSearchData?.map((hotel) => {
-          const type = typeOptions.find((opt) => opt.id === hotel.accommodationType)?.label || "Unknown";
-          const settings = {
-            dots: false,
-            infinite: hotel?.images?.length > 1,
-            speed: 500,
-            slidesToShow: 1,
-            slidesToScroll: 1,
-            arrows: hotel?.images?.length > 1,
-            prevArrow: <PrevArrow />,
-            nextArrow: <NextArrow />,
-          };
-          return (
-            <HotelCardContainer key={hotel?.accommodationId}>
-
-              {/* <ImageSliderWrapper>
+        {hotelSearchData.length > 0 ? (
+          hotelSearchData?.map((hotel) => {
+            const type =
+              typeOptions.find((opt) => opt.id === hotel.accommodationType)
+                ?.label || 'Unknown';
+            const settings = {
+              dots: false,
+              infinite: hotel?.images?.length > 1,
+              speed: 500,
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              arrows: hotel?.images?.length > 1,
+              prevArrow: <PrevArrow />,
+              nextArrow: <NextArrow />,
+            };
+            return (
+              <HotelCardContainer key={hotel?.accommodationId}>
+                {/* <ImageSliderWrapper>
               <Slider {...settings}>
                 {hotel.images.map((src, idx) => (
                   <div key={idx}>
@@ -413,113 +414,109 @@ export default function HotelCard({ hotelSearchData, buyersGroupData, exchangeGr
               </Slider>
             </ImageSliderWrapper> */}
 
-              <ImageSliderWrapper>
-                <Slider
-                  {...settings}
-                >
+                <ImageSliderWrapper>
+                  <Slider {...settings}>
+                    {hotel?.images?.map((src, idx) => (
+                      <div key={idx}>
+                        <img
+                          src={baseImageURL + src.ImageURL}
+                          alt={`${hotel?.name} slide ${idx + 1}`}
+                        />
+                      </div>
+                    ))}
+                  </Slider>
+                </ImageSliderWrapper>
 
-                  {hotel?.images?.map((src, idx) => (
-                    <div key={idx}>
-                      <img src={baseImageURL + src.ImageURL} alt={`${hotel?.name} slide ${idx + 1}`} />
+                <HotelInfo>
+                  <HotelInfoTop>
+                    <div>
+                      <HotelTitle>{hotel?.accommodationName}</HotelTitle>
+                      <HotelSecondary>{hotel?.details}</HotelSecondary>
                     </div>
-                  ))}
-                </Slider>
-              </ImageSliderWrapper>
+                    <RatingRibbon>{hotel?.rating}</RatingRibbon>
+                  </HotelInfoTop>
 
-              <HotelInfo>
-                <HotelInfoTop>
-                  <div>
-                    <HotelTitle>{hotel?.accommodationName}</HotelTitle>
-                    <HotelSecondary>{hotel?.details}</HotelSecondary>
-                  </div>
-                  <RatingRibbon>{hotel?.rating}</RatingRibbon>
-                </HotelInfoTop>
+                  {/* {hotel.rooms.map((room, idx) => ( */}
+                  {/* <RoomDetailsContainer key={idx}> */}
+                  <RoomDetailsContainer>
+                    <DetailsCol>
+                      <DetailBlock>
+                        <HotelTitle as="div">
+                          {hotel?.rooms?.RoomTypeName}
+                        </HotelTitle>
+                        {/* <HotelTertiary>{room.roomDetail}</HotelTertiary> */}
+                      </DetailBlock>
+                      <DetailBlock>
+                        {hotel?.rooms?.rateplans[0]?.BreakfastIncluded ? (
+                          <div>Breakfast included</div>
+                        ) : (
+                          <div>Breakfast not included</div>
+                        )}
+                        <HotelTertiary>
+                          {hotel?.rooms?.rateplans[0]?.NonRefundableRate
+                            ? 'Not Refundable'
+                            : 'Refundable'}
+                        </HotelTertiary>
+                      </DetailBlock>
 
-                {/* {hotel.rooms.map((room, idx) => ( */}
-                {/* <RoomDetailsContainer key={idx}> */}
-                <RoomDetailsContainer>
-                  <DetailsCol>
-                    <DetailBlock>
-                      <HotelTitle as="div">{hotel?.rooms?.RoomTypeName}</HotelTitle>
-                      {/* <HotelTertiary>{room.roomDetail}</HotelTertiary> */}
-                    </DetailBlock>
-                    <DetailBlock>
-                      {hotel?.rooms?.rateplans[0]?.BreakfastIncluded ? (
-                        <div>Breakfast included</div>
-                      ) : (
-                        <div>Breakfast not included</div>
-                      )}
-                      <HotelTertiary>
-                        {hotel?.rooms?.rateplans[0]?.NonRefundableRate
-                          ? "Not Refundable"
-                          : "Refundable"}
-                      </HotelTertiary>
-                    </DetailBlock>
-
-                    {
-                      (hotel?.rooms &&
-                        hotel?.rooms?.rateplans[0]?.TotalPrice) ? (
+                      {hotel?.rooms &&
+                      hotel?.rooms?.rateplans[0]?.TotalPrice ? (
                         <BoldText>
-                          PKR. {
-                            (() => {
-                              const basePrice = hotel.rooms.rateplans[0].totalPriceExcludeTax;
-                              const tax = hotel.rooms.rateplans[0].TotalTax;
-                              let finalPrice = basePrice;
+                          PKR.{hotel?.rooms?.rateplans[0]?.TotalPrice}
+                          {/* {(() => {
+                            const basePrice =
+                              hotel.rooms.rateplans[0].totalPriceExcludeTax;
+                            const tax = hotel.rooms.rateplans[0].TotalTax;
+                            let finalPrice = basePrice;
 
-                              if (applyMarginFunc(hotel)) {
-                                if (buyersGroupData.type_charged === "fixed") {
-                                  finalPrice += buyersGroupData.margin;
-                                } else {
-                                  finalPrice += (basePrice * buyersGroupData.margin) / 100;
-                                }
+                            if (applyMarginFunc(hotel)) {
+                              if (buyersGroupData.type_charged === 'fixed') {
+                                finalPrice += buyersGroupData.margin;
+                              } else {
+                                finalPrice +=
+                                  (basePrice * buyersGroupData.margin) / 100;
                               }
+                            }
 
-                              finalPrice += tax;
+                            finalPrice += tax;
 
-                              return applyExchange(finalPrice).toFixed(2);
-                            })()
-                          }
+                            return applyExchange(finalPrice).toFixed(2);
+                          })()} */}
                         </BoldText>
                       ) : (
                         <BoldText>PKR 0</BoldText>
-                      )
-                    }
-
-
-                  </DetailsCol>
-                  <ShowButtonCol>
-
-
-
-                    <HotelBottomDetails>
-                      <Stars>
-                        {/* {Number(hotel.rating).toFixed(1)}{" "} */}
-                        {"★".repeat(Math.floor(hotel.rating))}
-                      </Stars>
-                      <HotelSecondary>{type}</HotelSecondary>
-                      {/* <HotelTertiary>{hotel?.address}</HotelTertiary> */}
-                    </HotelBottomDetails>
-                    <HotelBottomDetails>
-                      <HotelTertiary>{hotel?.address}</HotelTertiary>
-                    </HotelBottomDetails>
-                    <div style={{ padding: '1rem 1.55rem' }}>
-
-                      <MyButton
-                        color='#fff'
-                        border='none'
-                        padding='0.60rem 1.55rem'
-                        width="100%"
-                        height="100%"
-                        borderRadius='0.8rem'
-                        bgColor={({ theme }) => theme.colors.primary}
-                        fontSize={({ theme }) => theme.fontSizes.xsmall}
-                        onClick={
-                          () => searchSpecificHotel(hotel?.accommodationId)}
-                      >
-                        Show All
-                      </MyButton>
-                    </div>
-                    {/* <ShowButton
+                      )}
+                    </DetailsCol>
+                    <ShowButtonCol>
+                      <HotelBottomDetails>
+                        <Stars>
+                          {/* {Number(hotel.rating).toFixed(1)}{" "} */}
+                          {'★'.repeat(Math.floor(hotel.rating))}
+                        </Stars>
+                        <HotelSecondary>{type}</HotelSecondary>
+                        {/* <HotelTertiary>{hotel?.address}</HotelTertiary> */}
+                      </HotelBottomDetails>
+                      <HotelBottomDetails>
+                        <HotelTertiary>{hotel?.address}</HotelTertiary>
+                      </HotelBottomDetails>
+                      <div style={{ padding: '1rem 1.55rem' }}>
+                        <MyButton
+                          color="#fff"
+                          border="none"
+                          padding="0.60rem 1.55rem"
+                          width="100%"
+                          height="100%"
+                          borderRadius="0.8rem"
+                          bgColor={({ theme }) => theme.colors.primary}
+                          fontSize={({ theme }) => theme.fontSizes.xsmall}
+                          onClick={() =>
+                            searchSpecificHotel(hotel?.accommodationId)
+                          }
+                        >
+                          Show All
+                        </MyButton>
+                      </div>
+                      {/* <ShowButton
                       onClick={
                         () => searchSpecificHotel(hotel?.accommodationId)
 
@@ -528,20 +525,20 @@ export default function HotelCard({ hotelSearchData, buyersGroupData, exchangeGr
                     >
                       Show All
                     </ShowButton> */}
-                  </ShowButtonCol>
-                </RoomDetailsContainer>
-                {/* ))} */}
-              </HotelInfo>
-            </HotelCardContainer>
-          )
-        }
-        )
-        ) : (<HotelCardContainer>
-          <HotelInfo>
-            <h2 >No Hotel Available!</h2>
-          </HotelInfo>
-        </HotelCardContainer>)}
-
+                    </ShowButtonCol>
+                  </RoomDetailsContainer>
+                  {/* ))} */}
+                </HotelInfo>
+              </HotelCardContainer>
+            );
+          })
+        ) : (
+          <HotelCardContainer>
+            <HotelInfo>
+              <h2>No Hotel Available!</h2>
+            </HotelInfo>
+          </HotelCardContainer>
+        )}
       </>
     </>
   );

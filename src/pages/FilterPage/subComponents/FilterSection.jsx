@@ -1,26 +1,27 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import beamImg from "../../../assets/filters_beam.png";
-import filterBg from "../../../assets/searchFilterBackdrop.webp";
+/* eslint-disable no-unused-vars */
+// import beamImg from '../../../assets/filters_beam.png';
+// import { useThemeContext } from '../../../theme/ThemeProvider';
+// import RatingSection from './RatingSection';
+// import { FaHotel } from 'react-icons/fa';
+// import { getCities } from '../../../api/getCities';
+// import { useEffect } from 'react';
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import filterBg from '../../../assets/searchFilterBackdrop.webp';
 
-import { useThemeContext } from "../../../theme/ThemeProvider";
-import RoomSelectionComp from "./RoomSelectionComp";
-import DestinationSection from "./DestinationSection";
-import DateSelectionSection from "./DateSelectionSection";
-import RatingSection from "./RatingSection";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-import { getCities } from "../../../api/getCities";
-import { hotelSearch } from "../../../api/hotelSearch";
-import { useHotelSearch } from "../../../context/HotelSearchContext";
-import FooterSection from "../../Login/subcomponents/FooterSection";
-import Spinner from "../../../components/Spinner";
-import Header from "../../../components/Header";
-import { FaHotel } from "react-icons/fa";
-import FeaturesSection from "../../Login/subcomponents/FeaturesSection";
-import AboutSection from "../../Login/subcomponents/AboutSection";
-import TopDestinationSection from "../../Login/subcomponents/TopDestinationSection";
+import RoomSelectionComp from './RoomSelectionComp';
+import DestinationSection from './DestinationSection';
+import DateSelectionSection from './DateSelectionSection';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { hotelSearch } from '../../../api/hotelSearch';
+import { useHotelSearch } from '../../../context/HotelSearchContext';
+import FooterSection from '../../Login/subcomponents/FooterSection';
+import Spinner from '../../../components/Spinner';
+import Header from '../../../components/Header';
+import FeaturesSection from '../../Login/subcomponents/FeaturesSection';
+import AboutSection from '../../Login/subcomponents/AboutSection';
+import TopDestinationSection from '../../Login/subcomponents/TopDestinationSection';
 
 // Main container with gradient
 // const Container = styled.section`
@@ -53,7 +54,7 @@ const Container = styled.section`
   width: 100%;
   margin: 0 auto;
   padding: 20px 100px 0 100px;
-  background:  ${({ theme }) => theme.colors.primary};
+  background: ${({ theme }) => theme.colors.primary};
   // background: linear-gradient(
   //   to top,
   //   ${({ theme }) => theme.colors.primary} 0%,
@@ -114,11 +115,11 @@ const ServiceContainer = styled.div`
 const ServiceTab = styled.button`
   flex: none;
   background: ${({ selected, theme }) =>
-    selected ? theme.colors.primary : "transparent"};
+    selected ? theme.colors.primary : 'transparent'};
   color: ${({ theme }) => theme.colors.secondary};
   border: 1px solid ${({ theme }) => theme.colors.primary};
   border-radius: 1rem;
-  padding: 1.0rem 1.5rem;
+  padding: 1rem 1.5rem;
   font-family: ${({ theme }) => theme.fonts.primaryText};
   // font-weight: 500;
   font-size: ${({ theme }) => theme.fontSizes.small};
@@ -149,13 +150,12 @@ const Card = styled.div`
   justify-content: center;
 `;
 
-
 const InnerContent = styled.div`
-position: relative;
+  position: relative;
   width: 100%;
   margin: 0 auto;
   padding: 20px 100px 0 100px;
-  
+
   color: ${({ theme }) => theme.colors.primaryText};
   box-sizing: border-box;
   overflow: hidden;
@@ -180,7 +180,7 @@ const Tagline = styled.h1`
   text-align: center;
   margin-bottom: 2rem;
   color: ${({ theme }) => theme.colors.primary};
-  `;
+`;
 const Title = styled.h1`
   font-size: ${({ theme }) => theme.fontSizes.xxlarge};
   font-family: ${({ theme }) => theme.fonts.primaryHeading};
@@ -218,25 +218,25 @@ const Row1 = styled.div`
   display: grid;
   gap: 1rem;
   /* For screens > 768px, use percentage widths */
-  grid-template-areas: "dest dates rooms search";
+  grid-template-areas: 'dest dates rooms search';
   grid-template-columns: 40% 25% 15% 15%;
   align-items: end;
 
   /* Tablet and below (<=768px): two-row layout */
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     grid-template-areas:
-      "dest dest dest dest"
-      "dates rooms search search";
+      'dest dest dest dest'
+      'dates rooms search search';
     grid-template-columns: repeat(3, 1fr);
   }
 
   /* Mobile (<=450px): single column */
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     grid-template-areas:
-      "dest"
-      "dates"
-      "rooms"
-      "search";
+      'dest'
+      'dates'
+      'rooms'
+      'search';
     grid-template-columns: 1fr;
   }
 `;
@@ -254,13 +254,13 @@ const Row2 = styled.div`
   display: grid;
   gap: 1rem;
   margin-bottom: 1rem;
-  grid-template-areas: "citizen rating";
+  grid-template-areas: 'citizen rating';
   grid-template-columns: 1fr 1fr;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.desktop}) {
     grid-template-areas:
-      "citizen"
-      "rating";
+      'citizen'
+      'rating';
     grid-template-columns: 1fr;
   }
 `;
@@ -301,14 +301,15 @@ const CancelLabel = styled.label`
 
 const SearchButton = styled.button`
   grid-area: search;
-  background: ${({ theme, disabled }) => disabled ? '#aaa' : theme.colors.primary};
+  background: ${({ theme, disabled }) =>
+    disabled ? '#aaa' : theme.colors.primary};
   color: #fff;
   border: none;
   padding: 0.75rem 1.5rem;
   align-self: stretch;
   border-radius: 0.8rem;
   font-size: ${({ theme }) => theme.fontSizes.small};
-  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -318,7 +319,7 @@ const SearchButton = styled.button`
 
   &:active {
     transform: translateY(2px); /* press down effect */
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
@@ -335,14 +336,14 @@ const FullSearchButton = styled(SearchButton)`
   }
 `;
 const SelectedOption = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    // margin-left: 2rem;
-    color: ${({ theme }) => theme.colors.primary};
-    font-size: ${({ theme }) => theme.fontSizes.medium};
-    cursor: pointer;
-  `;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  // margin-left: 2rem;
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: ${({ theme }) => theme.fontSizes.medium};
+  cursor: pointer;
+`;
 
 // const Spinner = styled.div`
 //   width: 18px;
@@ -361,33 +362,39 @@ const SelectedOption = styled.div`
 
 // Component
 export default function FilterSection() {
-  const { mode } = useThemeContext();
-  const { hotelSearchData, setHotelSearchData, setBuyersGroupData, setFilteringData, setExchangeGroupData } =
-    useHotelSearch();
+  // const { mode } = useThemeContext();
+  const {
+    // hotelSearchData,
+    setHotelSearchData,
+    // setBuyersGroupData,
+    setFilteringData,
+    // setExchangeGroupData,
+  } = useHotelSearch();
   const navigate = useNavigate();
 
   // 1) Lifted state for every filter
-  const [destination, setDestination] = useState("");
-  const [cityName, setCityName] = useState("");
+  const [destination, setDestination] = useState('');
+  const [cityName, setCityName] = useState('');
   const [dates, setDates] = useState({
     checkIn: null,
     checkOut: null,
     nights: null,
   });
   const [roomsInfo, setRoomsInfo] = useState([
-    { label: "Room 1", Adults: 1, Children: 0 },
+    { label: 'Room 1', Adults: 1, Children: 0 },
   ]);
+  // eslint-disable-next-line no-unused-vars
   const [rating, setRating] = useState([]);
   const [freeCancellation, setFreeCancellation] = useState(false);
 
-  const [isDataSearched, setIsDataSearched] = useState(false);
+  // const [isDataSearched, setIsDataSearched] = useState(false);
 
-  const [selectedService, setSelectedService] = useState("hotels");
+  // const [selectedService, setSelectedService] = useState('hotels');
   const [isSearching, setIsSearching] = useState(false);
 
   // 2) When the Search button is clicked, build your payload
   const handleSearch = () => {
-    setIsSearching(true)
+    setIsSearching(true);
 
     // 1) validate
     if (
@@ -397,10 +404,10 @@ export default function FilterSection() {
       !roomsInfo ||
       !rating
     ) {
-      toast.error("Filter data is missing!", {
-        style: { fontSize: "1.25rem", padding: "16px 24px" },
+      toast.error('Filter data is missing!', {
+        style: { fontSize: '1.25rem', padding: '16px 24px' },
       });
-      setIsSearching(false)
+      setIsSearching(false);
 
       return;
     }
@@ -419,8 +426,8 @@ export default function FilterSection() {
     setFilteringData(payload);
 
     // 3) kick off search
-    const toastId = toast.loading("Searching…", {
-      style: { fontSize: "1.25rem", padding: "16px 24px" },
+    const toastId = toast.loading('Searching…', {
+      style: { fontSize: '1.25rem', padding: '16px 24px' },
     });
 
     hotelSearch(payload)
@@ -430,17 +437,17 @@ export default function FilterSection() {
         // console.log("results", response);
         // 4) save results in context
         // console.log('response1', response.exchangeGroup)
-        if (!response.exchangeGroup) {
-          toast.error("Please complete office profile!", {
-            style: { fontSize: "1.25rem", padding: "16px 24px" },
-          });
-          toast.dismiss(toastId);
-          setIsSearching(false)
-          return
-        }
+        // if (!response.exchangeGroup) {
+        //   toast.error("Please complete office profile!", {
+        //     style: { fontSize: "1.25rem", padding: "16px 24px" },
+        //   });
+        //   toast.dismiss(toastId);
+        //   setIsSearching(false)
+        //   return
+        // }
         setHotelSearchData(response.data);
-        setBuyersGroupData(response.buyerGroup);
-        setExchangeGroupData(response.exchangeGroup);
+        // setBuyersGroupData(response.buyerGroup);
+        // setExchangeGroupData(response.exchangeGroup);
         // dismiss loading toast
         toast.dismiss(toastId);
 
@@ -450,7 +457,7 @@ export default function FilterSection() {
           // });
           // 5) navigate only *after* context has been updated
           // navigate("/search-results");
-          navigate("/search-results", {
+          navigate('/search-results', {
             state: {
               cameFromSearch: true,
               // Optionally pass the actual results or query if you want:
@@ -459,13 +466,13 @@ export default function FilterSection() {
             },
           });
         } else {
-          toast.error("Failed to load hotels", {
-            style: { fontSize: "1.25rem", padding: "16px 24px" },
+          toast.error('Failed to load hotels', {
+            style: { fontSize: '1.25rem', padding: '16px 24px' },
           });
         }
       })
       .catch((err) => {
-        console.error("Search API failed:", err);
+        console.error('Search API failed:', err);
         toast.dismiss(toastId);
 
         // toast.error("Network error", {
@@ -473,18 +480,16 @@ export default function FilterSection() {
         // });
       })
       .Finally((err) => {
-        setIsSearching(false)
+        setIsSearching(false);
       });
   };
 
-
   const services = [
-    { key: "hotels", label: "Hotels and Apartments" },
+    { key: 'hotels', label: 'Hotels and Apartments' },
     // { key: "flights", label: "Air tickets" },
     // { key: "cars", label: "Car rentals" },
     // { key: "trains", label: "Train tickets" },
   ];
-
 
   return (
     <>
@@ -514,22 +519,20 @@ export default function FilterSection() {
           {/* use searchFilterBackdrop.webp from assests image background on card */}
           <div
             style={{
-              display: 'flex', justifyContent: 'center'
-            }}>
-
-            <Tagline>
-              Travel with Stayovia
-            </Tagline>
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            <Tagline>Travel with Stayovia</Tagline>
           </div>
-          <div
+          {/* <div
             style={{
-              display: 'flex', justifyContent: 'start',
-            }}>
-
-            <Title>
-              Where to next?
-            </Title>
-          </div>
+              display: 'flex',
+              justifyContent: 'start',
+            }}
+          >
+            <Title>Where to next?</Title>
+          </div> */}
           <Row1>
             {/* Destination Section */}
             <DestinationSection
@@ -551,7 +554,7 @@ export default function FilterSection() {
               setRooms={(newRooms) => setRoomsInfo(newRooms)}
             />
             <SearchButton disabled={isSearching} onClick={handleSearch}>
-              {isSearching ? <Spinner /> : "Search"}
+              {isSearching ? <Spinner /> : 'Search'}
             </SearchButton>
           </Row1>
 
@@ -580,12 +583,9 @@ export default function FilterSection() {
             </CancelLabel> */}
           </Row3>
 
-
-
           <FullSearchButton disabled={isSearching} onClick={handleSearch}>
-            {isSearching ? <Spinner /> : "Search"}
+            {isSearching ? <Spinner /> : 'Search'}
           </FullSearchButton>
-
         </Card>
         <Separator />
 

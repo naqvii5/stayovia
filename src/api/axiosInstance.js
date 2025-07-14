@@ -1,26 +1,26 @@
 // Base URL and headers here.
-import axios from "axios";
-import { getAuthToken } from "../utils/authCookies";
-const source = localStorage.getItem("source");
+import axios from 'axios';
+import { getAuthToken } from '../utils/authCookies';
+const source = localStorage.getItem('source');
 // var baseURL = 'http://192.168.0.148:8000/api/b2b/';
 var baseURL = 'https://staging.bedandbeds.com/api/b2b/';
 
 export const axiosInstance = axios.create({
   baseURL: baseURL,
   headers: {
-    "Content-Type": "application/json",
-    "Accept": "application/json"
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
   },
-  "Access-Control-Allow-Origin": "*", // You can add this header to request too
+  'Access-Control-Allow-Origin': '*', // You can add this header to request too
 });
 
 export const axiosInstanceWithToken = axios.create({
   baseURL: baseURL,
   headers: {
-    "Content-Type": "application/json",
-    "Accept": "application/json"
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
   },
-  "Access-Control-Allow-Origin": "*", // You can add this header to request too
+  'Access-Control-Allow-Origin': '*', // You can add this header to request too
 });
 
 // Attach token dynamically before each request
@@ -29,7 +29,7 @@ axiosInstanceWithToken.interceptors.request.use((config) => {
   // sessionStorage.getItem("auth_token");
   // console.log('token', token)
   if (token) {
-    config.headers["Authorization"] = `Bearer ${token}`;
+    config.headers['Authorization'] = `Bearer ${token}`;
   }
   return config;
 });

@@ -1,8 +1,8 @@
 // All End points
 export const ENDPOINTS = {
-    GET_CITIES: "cities",
-    SEARCH_HOTELS: "hotels/search",
-    SEARCH_SPECIFIC_HOTEL: "hotel/search/accommodation",
+    GET_CITIES: "cities-d",
+    SEARCH_HOTELS: "hotels/search-d",
+    SEARCH_SPECIFIC_HOTEL: "hotel/search/accommodation-d",
     CREATE_BOOKING: "booking/store",
     LOGIN: "auth/login",
     LOGOUT: "logout",

@@ -1,37 +1,37 @@
 // src/pages/CheckOut/CheckOut.jsx
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useForm, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { MyButton } from "../../components/MyButton";
-import Container_NoGradient from "../../components/Container_NoGradient";
-import Header from "../../components/Header";
-import FooterSection from "../Login/subcomponents/FooterSection";
-import RightColumnSection from "../HotelDetails/subcomponents/RightColumnSection";
-import { useTheme } from "styled-components";
-import { useHotelSearch } from "../../context/HotelSearchContext";
-import { createBooking } from "../../api/createBooking";
-import toast from "react-hot-toast";
-import GuestForm from "./subComponents/GuestForm";
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useForm, useFieldArray } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { MyButton } from '../../components/MyButton';
+import Container_NoGradient from '../../components/Container_NoGradient';
+import Header from '../../components/Header';
+import FooterSection from '../Login/subcomponents/FooterSection';
+import RightColumnSection from '../HotelDetails/subcomponents/RightColumnSection';
+import { useTheme } from 'styled-components';
+import { useHotelSearch } from '../../context/HotelSearchContext';
+import { createBooking } from '../../api/createBooking';
+import toast from 'react-hot-toast';
+import GuestForm from './subComponents/GuestForm';
 
 // ————— Validation Schemas —————
 const bookingSchema = z.object({
-  title: z.enum(["Mr", "Ms", "Mrs"], { message: "Please select a title" }),
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
+  title: z.enum(['Mr', 'Ms', 'Mrs'], { message: 'Please select a title' }),
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
   DOB: z
     .string()
-    .refine((v) => !isNaN(Date.parse(v)), { message: "Enter a valid date" }),
+    .refine((v) => !isNaN(Date.parse(v)), { message: 'Enter a valid date' }),
 });
 
 const multiBookingSchema = z.object({
   applyAll: z.boolean(),
-  email: z.string().email("Enter a valid email"),
-  phone: z.string().min(1, "Phone number is required"),
-  country: z.string().min(1, "Country is required"),
-  guests: z.array(bookingSchema).min(1, "At least one guest is required"),
+  email: z.string().email('Enter a valid email'),
+  phone: z.string().min(1, 'Phone number is required'),
+  country: z.string().min(1, 'Country is required'),
+  guests: z.array(bookingSchema).min(1, 'At least one guest is required'),
 });
 
 // ————— Component —————
@@ -44,21 +44,20 @@ export default function CheckOut() {
   useEffect(() => {
     // If someone didn’t legitimately come from HotelDetails, bounce to /search
     if (!location.state?.cameFromHotelDetails) {
-      navigate("/search", { replace: true });
+      navigate('/search', { replace: true });
     }
   }, [location.state, navigate]);
 
-
   const [cart] = useState(() => {
-    const raw = localStorage.getItem("cart");
+    const raw = localStorage.getItem('cart');
     return raw ? JSON.parse(raw) : [];
   });
   const [cartDetails] = useState(() => {
-    const raw = localStorage.getItem("cartDetails");
+    const raw = localStorage.getItem('cartDetails');
     return raw ? JSON.parse(raw) : [];
   });
   const [bookingData] = useState(() => {
-    const raw = localStorage.getItem("payload");
+    const raw = localStorage.getItem('payload');
     return raw ? JSON.parse(raw) : [];
   });
   // const [grandTotal] = useState(
@@ -79,21 +78,21 @@ export default function CheckOut() {
     resolver: zodResolver(multiBookingSchema),
     defaultValues: {
       applyAll: false,
-      email: "",
-      phone: "",
-      country: "",
+      email: '',
+      phone: '',
+      country: '',
       guests: Array(numberOfGuests).fill({
-        title: "",
-        firstName: "",
-        lastName: "",
-        DOB: "",
+        title: '',
+        firstName: '',
+        lastName: '',
+        DOB: '',
       }),
     },
   });
 
-  const { fields } = useFieldArray({ control, name: "guests" });
-  const applyAll = watch("applyAll");
-  const guests = watch("guests");
+  const { fields } = useFieldArray({ control, name: 'guests' });
+  const applyAll = watch('applyAll');
+  const guests = watch('guests');
 
   // copy first guest into all others when applyAll is toggled
   useEffect(() => {
@@ -113,7 +112,7 @@ export default function CheckOut() {
       email: data.email,
       phone: data.phone,
       country: 'pakistan',
-      bookingSource: "bedandbeds",
+      bookingSource: 'bedandbeds',
       grandTotal,
       grandTotalWithBuyersGroup: grandTotalWithBuyersGroup,
       rooms: cart,
@@ -127,22 +126,18 @@ export default function CheckOut() {
     // navigate("/confirmed");
   };
 
-
-
   const createBookingAPI = (payload) => {
     // 1) validate
-    if (
-      payload.guestInfo == ""
-    ) {
-      toast.error("Data is missing!", {
-        style: { fontSize: "1.25rem", padding: "16px 24px" },
+    if (payload.guestInfo == '') {
+      toast.error('Data is missing!', {
+        style: { fontSize: '1.25rem', padding: '16px 24px' },
       });
       return;
     }
     // console.log("payload", payload);
     // 3) kick off search
-    const toastId = toast.loading("Confirming....!", {
-      style: { fontSize: "1.25rem", padding: "16px 24px" },
+    const toastId = toast.loading('Confirming....!', {
+      style: { fontSize: '1.25rem', padding: '16px 24px' },
     });
 
     createBooking(payload)
@@ -152,27 +147,27 @@ export default function CheckOut() {
         // console.log("results", response);
         const status = response.status;
         // 4) save results in context
-        localStorage.setItem("booking data", JSON.stringify(response));
+        localStorage.setItem('booking data', JSON.stringify(response));
 
         // dismiss loading toast
         toast.dismiss(toastId);
 
         if (status) {
           toast.success(response.message, {
-            style: { fontSize: "1.25rem", padding: "16px 24px" },
+            style: { fontSize: '1.25rem', padding: '16px 24px' },
           });
-          navigate("/confirmed");
+          navigate('/confirmed');
         } else {
           toast.error(response.message, {
-            style: { fontSize: "1.25rem", padding: "16px 24px" },
+            style: { fontSize: '1.25rem', padding: '16px 24px' },
           });
         }
       })
       .catch((err) => {
-        console.error("Search API failed:", err);
+        console.error('Search API failed:', err);
         toast.dismiss(toastId);
-        toast.error("Error", {
-          style: { fontSize: "1.25rem", padding: "16px 24px" },
+        toast.error('Error', {
+          style: { fontSize: '1.25rem', padding: '16px 24px' },
         });
       });
   };
@@ -183,14 +178,17 @@ export default function CheckOut() {
         <TopBar>
           <Breadcrumb>
             <Link to="/">Main Page</Link> &gt;
-            <Link to="#"> Search</Link> &gt;
-            <Link to="#"> Checkout</Link>
+            <Link to=""> Search</Link> &gt;
+            <Link to=""> Checkout</Link>
           </Breadcrumb>
         </TopBar>
 
         <ContentArea>
           <LeftColumn>
-            <GuestForm numberOfGuests={numberOfGuests} submitForm={submitForm} />
+            <GuestForm
+              numberOfGuests={numberOfGuests}
+              submitForm={submitForm}
+            />
           </LeftColumn>
 
           <RightColumnSection
@@ -209,7 +207,7 @@ export default function CheckOut() {
 // ————— Styled Components —————
 const TopBar = styled.div`
   width: max-content;
-  background: ${({ theme }) => theme.colors.secondary};
+  background: ${({ theme }) => theme.colors.primary};
   padding: 1rem 2rem;
   border-radius: 0.8rem;
   box-shadow: 0 1px 3px ${({ theme }) => theme.colors.primary};
@@ -223,8 +221,8 @@ const TopBar = styled.div`
 `;
 const Breadcrumb = styled.div`
   width: 100%;
+  color: ${({ theme }) => theme.colors.whiteText};
   a {
-    color: ${({ theme }) => theme.colors.primary};
     text-decoration: none;
     margin: 0 0.5rem;
   }
@@ -309,6 +307,6 @@ const Select = styled.select`
   ${sharedInputStyles} width: 100%;
 `;
 const Error = styled.small`
-  color: ${({ theme }) => theme.colors.error || "red"};
+  color: ${({ theme }) => theme.colors.error || 'red'};
   font-size: 0.85rem;
 `;

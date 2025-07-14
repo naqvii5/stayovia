@@ -1,18 +1,18 @@
-import styled from "styled-components";
-import Container_NoGradient from "../../components/Container_NoGradient";
-import Header from "../../components/Header";
-import FooterSection from "../Login/subcomponents/FooterSection";
-import { useTheme } from "styled-components";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import styled from 'styled-components';
+import Container_NoGradient from '../../components/Container_NoGradient';
+import Header from '../../components/Header';
+import FooterSection from '../Login/subcomponents/FooterSection';
+import { useTheme } from 'styled-components';
+import { Link } from 'react-router-dom';
+import { useState } from 'react';
 // import RightColumnSection from "../HotelDetails/subcomponents/RightColumnSection";
-import OrderDetail from "./subComponents/orderDetail";
-import RightColumnSection from "../HotelDetails/subcomponents/RightColumnSection";
-import { useHotelSearch } from "../../context/HotelSearchContext";
+import OrderDetail from './subComponents/orderDetail';
+import RightColumnSection from '../HotelDetails/subcomponents/RightColumnSection';
+import { useHotelSearch } from '../../context/HotelSearchContext';
 // ————— Styled Components —————
 const TopBar = styled.div`
   width: max-content;
-  background: ${({ theme }) => theme.colors.secondary};
+  background: ${({ theme }) => theme.colors.primary};
   padding: 1rem 2rem;
   border-radius: 0.8rem;
   box-shadow: 0 1px 3px ${({ theme }) => theme.colors.primary};
@@ -26,8 +26,8 @@ const TopBar = styled.div`
 `;
 const Breadcrumb = styled.div`
   width: 100%;
+  color: ${({ theme }) => theme.colors.whiteText};
   a {
-    color: ${({ theme }) => theme.colors.primary};
     text-decoration: none;
     margin: 0 0.5rem;
   }
@@ -49,17 +49,20 @@ const LeftColumnCards = styled.div`
 
 export default function BookingConfirmed() {
   const styledTheme = useTheme();
-  const { grandTotal, grandTotalWithBuyersGroup } = useHotelSearch();
+  const {
+    grandTotal,
+    // grandTotalWithBuyersGroup
+  } = useHotelSearch();
 
   const [cart] = useState(() => {
-    const raw = localStorage.getItem("cart");
+    const raw = localStorage.getItem('cart');
     return raw ? JSON.parse(raw) : [];
   });
   // const [grandTotal] = useState(
   //   Number(localStorage.getItem("grandTotal") || 0)
   // );
   const [bookingData] = useState(() => {
-    const raw = localStorage.getItem("booking data");
+    const raw = localStorage.getItem('booking data');
     return raw ? JSON.parse(raw) : [];
   });
   return (
@@ -69,7 +72,7 @@ export default function BookingConfirmed() {
         <TopBar>
           <Breadcrumb>
             <Link to="/">Main Page</Link> &gt;
-            <Link to="/search"> Search</Link> &gt;
+            <Link to="/#/search"> Search</Link> &gt;
           </Breadcrumb>
         </TopBar>
         <>
@@ -79,16 +82,16 @@ export default function BookingConfirmed() {
             <h2>Booking Pin: {bookingData?.bookingPin}</h2>
             <h2>Confirmation Code: {bookingData?.confirmationCode}</h2>
           </LeftColumnCards>
-          <div style={{ height: "40vh", overflowY: "auto" }}>
+          <div style={{ height: 'auto', overflowY: 'auto' }}>
             {/* <OrderDetail
               cart={cart}
               grandTotal={grandTotal}
               isCheckOut={true}
             /> */}
-            <RightColumnSection
+            <OrderDetail
               cart={cart}
               grandTotal={grandTotal}
-              grandTotalWithBuyersGroup={grandTotalWithBuyersGroup}
+              // grandTotalWithBuyersGroup={grandTotalWithBuyersGroup}
               isCheckOut={true}
             />
           </div>

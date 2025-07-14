@@ -1,13 +1,13 @@
 // LoginSection.jsx
-import styled from "styled-components";
-import logoSrc from "../assets/StayoViaLogo.png";
-import SwitchThemeBtn from "./SwitchThemeBtn";
-import { Link, useNavigate } from "react-router-dom";
-import { clearAuthToken } from "../utils/authCookies";
-import { useAuthContext } from "../context/AuthContext";
-import toast from "react-hot-toast";
-import { adminLogin } from "../api/adminLogin";
-import { logout } from "../api/logout";
+import styled from 'styled-components';
+import logoSrc from '../assets/StayoViaLogo.png';
+import SwitchThemeBtn from './SwitchThemeBtn';
+import { Link, useNavigate } from 'react-router-dom';
+import { clearAuthToken } from '../utils/authCookies';
+import { useAuthContext } from '../context/AuthContext';
+import toast from 'react-hot-toast';
+import { adminLogin } from '../api/adminLogin';
+import { logout } from '../api/logout';
 // import SwitchThemeBtn from "../../../components/SwitchThemeBtn";
 
 const Container = styled.section`
@@ -51,7 +51,7 @@ const StyledLink = styled(Link)`
   font-family: ${({ theme }) => theme.fonts.primaryText};
   font-size: ${({ theme }) => theme.fontSizes.xsmall};
   // color: ${({ theme }) => theme.colors.primaryHeadingRevert};
-  color: #FFFF;
+  color: #ffff;
   // background: ${({ theme }) => theme.colors.primary};
   // padding: 0.5rem 1rem;
   border-radius: 0.5rem;
@@ -61,7 +61,9 @@ const StyledLink = styled(Link)`
   }
 `;
 const Logo = styled.img`
-  height: 140px; /* Large logo */
+  // height: 140px; /* Large logo */
+  max-height: 140px;
+  max-width: 140px;
   position: absolute;
   top: 50%;
   left: 0;
@@ -71,10 +73,8 @@ const Logo = styled.img`
   cursor: pointer;
 `;
 
-
-
 export default function Header() {
-  const { token, setToken } = useAuthContext()
+  const { token, setToken } = useAuthContext();
   const navigate = useNavigate();
 
   // ——— onSubmit handler (using the commented logic from handleLogin) ———
@@ -111,27 +111,24 @@ export default function Header() {
   // };
 
   const logOutFunc = async () => {
-
     try {
       const data = await logout();
       if (data.status) {
-        toast.success("Logged out successfully!", {
-          style: { fontSize: "1.25rem", padding: "16px 24px" },
+        toast.success('Logged out successfully!', {
+          style: { fontSize: '1.25rem', padding: '16px 24px' },
         });
-        clearAuthToken(),
-          setToken()
-
+        clearAuthToken(), setToken();
       } else {
-        toast.error("Failed to logout!", {
-          style: { fontSize: "1.25rem", padding: "16px 24px" },
+        toast.error('Failed to logout!', {
+          style: { fontSize: '1.25rem', padding: '16px 24px' },
         });
       }
     } catch (err) {
       // toast.dismiss(toastId);
-      toast.error("Error!", {
-        style: { fontSize: "1.25rem", padding: "16px 24px" },
+      toast.error('Error!', {
+        style: { fontSize: '1.25rem', padding: '16px 24px' },
       });
-      console.error("Login error:", err);
+      console.error('Login error:', err);
     }
   };
   return (
@@ -154,7 +151,7 @@ export default function Header() {
           //   </>
           // )
         }
-        <SwitchThemeBtn />
+        {/* <SwitchThemeBtn /> */}
       </NavActions>
     </HeaderRow>
 

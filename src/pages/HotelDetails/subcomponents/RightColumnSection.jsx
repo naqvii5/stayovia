@@ -1,24 +1,26 @@
-// src/components/RightColumnSection.jsx
-import React, { useState } from "react";
-import styled from "styled-components";
-import { Box } from "@mui/material";
-import { useTheme } from "styled-components";
-import { MyButton } from "../../../components/MyButton";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { Box } from '@mui/material';
+import { useTheme } from 'styled-components';
+import { MyButton } from '../../../components/MyButton';
+import { useNavigate } from 'react-router-dom';
 
-function RightColumnSection({ cart, grandTotal, grandTotalWithBuyersGroup, isCheckOut = false, cartDetails }) {
+function RightColumnSection({
+  cart,
+  grandTotal,
+  isCheckOut = false,
+  cartDetails,
+}) {
   const navigate = useNavigate();
   const styledTheme = useTheme();
   const [modalOpen, setModalOpen] = useState(false);
 
   function confirmOrder() {
-    localStorage.setItem("cart", JSON.stringify(cart));
-    localStorage.setItem("cartDetails", JSON.stringify(cartDetails));
-    // localStorage.setItem("grandTotal", grandTotal);
-    // navigate("/check-out");
-    navigate("/check-out", {
+    localStorage.setItem('cart', JSON.stringify(cart));
+    localStorage.setItem('cartDetails', JSON.stringify(cartDetails));
+    navigate('/check-out', {
       state: {
-        cameFromHotelDetails: true
+        cameFromHotelDetails: true,
       },
     });
   }
@@ -27,35 +29,51 @@ function RightColumnSection({ cart, grandTotal, grandTotalWithBuyersGroup, isChe
     <>
       <RightColumn>
         <CartBox>
-          <h1>{isCheckOut ? 'Your Reservation' : 'Your Reservation'}</h1>
-          {cart.map((item, idx) => (
-            <ItemBox key={idx} theme={styledTheme}>
-              <div><h2>{item.roomTypeName}</h2></div>
-              {/* <div><h3>Rate Plan: {item.ratePlanName}</h3></div> */}
-              <div><h3>Room(s) x {item.rooms}</h3></div>
-              <div >
-
-                <h3>Total: PKR {(item.priceWithBuyersGroup - item.tax).toLocaleString()}+
-                  PKR {(item.tax).toLocaleString()}Tax
+          <HeaderBox>
+            <h1>Your Reservation</h1>
+          </HeaderBox>
+          <div
+            style={{
+              maxHeight: '255px',
+              overflow: 'auto',
+            }}
+          >
+            {cart.map((item, idx) => (
+              <ItemBox key={idx} theme={styledTheme}>
+                <div>
+                  <h2>{item.roomTypeName}</h2>
+                </div>
+                <div>
+                  <h3>Room(s) x {item.rooms}</h3>
+                </div>
+                <h3>
+                  PKR {item.totalPriceExclTax.toLocaleString()} + PKR{' '}
+                  {item.tax.toLocaleString()} Tax
                 </h3>
+                <div>
+                  <h3 style={{ color: styledTheme.colors.secondary }}>
+                    PKR {(item.price * item.rooms).toLocaleString()} (Sub Total)
+                  </h3>
+                </div>
+              </ItemBox>
+            ))}
+          </div>
 
-                <div style={{
-                  borderTop: '1px solid gray', margin: '10px 0px', padding: '4px 0px'
-                }}><h3>Sub-Total: PKR {(item.priceWithBuyersGroup * item.rooms).toLocaleString()}</h3></div>
-                {/* <h3>Total: PKR {(item.priceWithBuyersGroup * item.rooms).toLocaleString()}</h3> */}
-              </div>
-            </ItemBox>
-          ))}
           <TotalBox theme={styledTheme}>
-            <div style={{
-              display: 'flex', flexDirection: 'column',
-              alignItems: 'center'
-            }}>
-              <h2>Grand Total</h2>
-              <h2>PKR {grandTotalWithBuyersGroup.toLocaleString()}</h2>
-
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <h2 style={{ color: styledTheme.colors.primary }}>GRAND TOTAL</h2>
+              <h2 style={{ color: styledTheme.colors.secondary }}>
+                PKR {grandTotal.toLocaleString()}
+              </h2>
             </div>
           </TotalBox>
+
           {!isCheckOut && (
             <MyButton
               bgColor={styledTheme.colors.primary}
@@ -65,6 +83,7 @@ function RightColumnSection({ cart, grandTotal, grandTotalWithBuyersGroup, isChe
               width="100%"
               disabled={cart.length <= 0}
               onClick={confirmOrder}
+              textColor="#fff"
             >
               Confirm
             </MyButton>
@@ -73,51 +92,51 @@ function RightColumnSection({ cart, grandTotal, grandTotalWithBuyersGroup, isChe
       </RightColumn>
 
       {/* Mobile Bottom Bar */}
-      {
-        cart.length > 0 && (
-          <>
-            <BottomBar>
-              <MyButton
-                bgColor={styledTheme.colors.primary}
-                fontSize={styledTheme.fontSizes.xsmall}
-                padding="10px"
-                borderRadius="10px"
-                width="90%"
-                disabled={cart.length <= 0}
-                onClick={() => setModalOpen(true)}
-              >
-                View Reservations
-              </MyButton>
-            </BottomBar>
+      {cart.length > 0 && (
+        <>
+          <BottomBar>
+            <MyButton
+              bgColor={styledTheme.colors.primary}
+              fontSize={styledTheme.fontSizes.xsmall}
+              padding="10px"
+              borderRadius="10px"
+              width="90%"
+              disabled={cart.length <= 0}
+              onClick={() => setModalOpen(true)}
+            >
+              View Reservations
+            </MyButton>
+          </BottomBar>
 
-            <BottomBar>
+          <BottomBar>
+            <MyButton
+              bgColor={styledTheme.colors.primary}
+              fontSize={styledTheme.fontSizes.xsmall}
+              padding="10px"
+              borderRadius="10px"
+              width="90%"
+              disabled={cart.length <= 0}
+              onClick={() => setModalOpen(true)}
+            >
+              View Reservations
+            </MyButton>
+            {!isCheckOut && (
               <MyButton
                 bgColor={styledTheme.colors.primary}
                 fontSize={styledTheme.fontSizes.xsmall}
                 padding="10px"
                 borderRadius="10px"
-                width="90%"
-                disabled={cart.length <= 0}
-                onClick={() => setModalOpen(true)}
+                width="100%"
+                onClick={confirmOrder}
+                textColor="#fff"
               >
-                View Reservations
+                Confirm
               </MyButton>
-              {!isCheckOut && (
-                <MyButton
-                  bgColor={styledTheme.colors.primary}
-                  fontSize={styledTheme.fontSizes.xsmall}
-                  padding="10px"
-                  borderRadius="10px"
-                  width="100%"
-                  onClick={confirmOrder}
-                >
-                  Confirm
-                </MyButton>
-              )}
-            </BottomBar>
-          </>
-        )
-      }
+            )}
+          </BottomBar>
+        </>
+      )}
+
       {/* Modal for mobile cart details */}
       {modalOpen && (
         <MobileOverlay>
@@ -126,24 +145,31 @@ function RightColumnSection({ cart, grandTotal, grandTotalWithBuyersGroup, isChe
             <h2>Your Reservation</h2>
             {cart.map((item, idx) => (
               <ItemBox key={idx} theme={styledTheme}>
-                <div><h3>{item.roomTypeName}</h3></div>
-                {/* <div><h3>Rate Plan: {item.ratePlanName}</h3></div> */}
                 <div>
-                  <h3>
-                    Room(s) x {item.rooms}
-                  </h3>
+                  <h3>{item.roomTypeName}</h3>
                 </div>
-                <div><strong>Sub-Total: PKR {(item.price * item.rooms).toLocaleString()}</strong></div>
+                <div>
+                  <h3>Room(s) x {item.rooms}</h3>
+                </div>
+                <div>
+                  <strong>
+                    Sub-Total: PKR {(item.price * item.rooms).toLocaleString()}
+                  </strong>
+                </div>
               </ItemBox>
             ))}
             <TotalBox theme={styledTheme}>
-              <div style={{
-                display: 'flex', flexDirection: 'column',
-                alignItems: 'center'
-              }}>
-                <h2>Grand Total</h2>
-                <h2>PKR {grandTotalWithBuyersGroup.toLocaleString()}</h2>
-
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
+                <h2 style={{ color: styledTheme.colors.primary }}>
+                  GRAND TOTAL
+                </h2>
+                <h2>PKR {grandTotal.toLocaleString()}</h2>
               </div>
             </TotalBox>
             {!isCheckOut && (
@@ -154,6 +180,7 @@ function RightColumnSection({ cart, grandTotal, grandTotalWithBuyersGroup, isChe
                 borderRadius="10px"
                 width="100%"
                 onClick={confirmOrder}
+                textColor="#fff"
               >
                 Confirm
               </MyButton>
@@ -169,11 +196,15 @@ export default RightColumnSection;
 
 // Styled Components
 const RightColumn = styled.div`
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 1000;
   flex: 0 0 20%;
   height: fit-content;
   background: ${({ theme }) => theme.colors.cardColor};
-  padding: 3px;
-  border-radius: 0.8rem;
+  padding: 0px 0px;
+  border-radius: 0 1rem 0.8rem 0;
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     display: none;
   }
@@ -181,28 +212,47 @@ const RightColumn = styled.div`
 
 const CartBox = styled(Box)`
   flex: 1;
-  padding: 1rem;
+  // padding: 1rem 0rem;
   width: 100%;
+  border-radius: 0 1rem 0.8rem 0;
+
   background: ${({ theme }) => theme.colors.cardColor};
-  border-radius: 0.8rem;
-  h2 { margin: 10px 0; }
+  // border-radius: 0.8rem;
+  h2 {
+    margin: 10px 0;
+  }
+`;
+
+const HeaderBox = styled.div`
+  background: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.whiteText};
+  padding: 0.8rem;
+  border-radius: 0 0.8rem 0rem 0;
+  text-align: center;
+  margin-bottom: 1rem;
 `;
 
 const ItemBox = styled(Box)`
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
-  border-bottom: 0.1px solid ${({ theme }) => theme.colors.primary};
-  border-radius: 5px;
-  background: ${({ theme }) => theme.colors.cardColor2};
-  padding: 10px 5px;
+  border-top: 1px solid ${({ theme }) => theme.colors.primary};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.primary};
+  // border-radius: 5px;
+  // background: ${({ theme }) => theme.colors.cardColor2};
+  padding: 10px 10px;
   gap: 10px;
+  h2 {
+    color: ${({ theme }) => theme.colors.primary};
+    margin: 0;
+  }
 `;
 
 const TotalBox = styled(Box)`
   margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid ${({ theme }) => theme.colors.secondaryText};
+  // padding-top: 1rem;
+  border-radius: 0px 0px 10px 0px;
+  border: double ${({ theme }) => theme.colors.primary};
 `;
 
 const BottomBar = styled.div`

@@ -1,104 +1,138 @@
-import React from "react";
-import styled from "styled-components";
-import {
-  AiOutlineDollarCircle,
-  AiOutlineClockCircle,
-  AiOutlineGlobal,
-} from "react-icons/ai";
-import { MdSecurity, MdHotel } from "react-icons/md";
-import sampleImg from "../../../assets/beach1.jpeg"; // TEMP image
+import React from 'react';
+import styled from 'styled-components';
+import Slider from 'react-slick';
+
+// Images
+import Islamabad1Img from '../../../assets/Islamabad1.jpeg';
+import Islamabad2Img from '../../../assets/Islamabad2.jpeg';
+import Islamabad3Img from '../../../assets/Islamabad3.jpeg';
+import Lahore1Img from '../../../assets/Lahore1.jpeg';
+import Lahore2Img from '../../../assets/Lahore2.jpeg';
+import Karachi1Img from '../../../assets/Karachi1.jpeg';
+import Karachi2Img from '../../../assets/Karachi2.jpeg';
+import Lyallpur1Img from '../../../assets/Lyallpur1.jpeg';
+import Multan1Img from '../../../assets/Multan1.jpeg';
 
 const Container = styled.section`
   width: 100%;
-  margin: 0px auto;
-  // padding: 70px 100px 40px 100px;
+  margin: 0 auto;
   box-sizing: border-box;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    padding: 20px 20px;
+    padding: 20px;
   }
 `;
 
 const Heading = styled.h2`
   font-family: ${({ theme }) => theme.fonts.primaryHeading};
   font-size: ${({ theme }) => theme.fontSizes.xxlarge};
-  color: ${({ theme }) => theme.mode == 'light' ? theme.colors.primary : theme.colors.primaryHeading};
+  color: ${({ theme }) =>
+    theme.mode === 'light'
+      ? theme.colors.primary
+      : theme.colors.primaryHeading};
   margin-bottom: 2rem;
   text-align: center;
 `;
+
 const CardsGrid = styled.div`
   display: flex;
-  flex-direction: row-reverse;
-  gap: 1.5rem;
   flex-wrap: wrap;
+  gap: 1.5rem;
   justify-content: center;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    flex-direction: column;
-  }
 `;
+
+// 1) Update your SlideImage:
+const SlideImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* Set up the transition for transform + opacity */
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  transform: scale(1);
+  opacity: 1;
+`;
+
+// 2) Add a hover rule in Card that targets SlideImage:
 const Card = styled.div`
-  width: 22%;
-aspect-ratio: 3 / 3.5; // slightly shorter
+  width: 30%;
+  aspect-ratio: 16 / 9;
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  background: ${({ theme }) => theme.colors.cardColor1};
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-  &:hover {
-    transform: scale(1.03);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-  }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    width: 45%;
+    width: 90%;
   }
-
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     width: 100%;
+    height: 200px;
     aspect-ratio: unset;
-    height: 250px;
+  }
+
+  /* On hover, zoom + fade the image */
+  &:hover ${SlideImage} {
+    transform: scale(1.1); /* zoom in 10% */
+    opacity: 0.9; /* slightly fade for a softer look */
+  }
+`;
+const CardRightSlider = styled(Slider)`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+
+  .slick-slide {
+    height: 100%;
+    display: flex;
+  }
+
+  .slick-slide > div {
+    height: 100%;
+    width: 100%;
   }
 `;
 
-const CardRight = styled.div`
+const SlideWrapper = styled.div`
   width: 100%;
   height: 100%;
-  background-image: url(${({ bg }) => bg});
-  background-size: cover; // ← change this
-  background-repeat: no-repeat;
-  background-position: center;
 `;
 
+// const SlideImage = styled.img`
+//   width: 100%;
+//   height: 100%;
+//   object-fit: cover;
+//   display: block;
+// `;
 
 const CardTitle = styled.div`
   position: absolute;
   bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
+  // left: 50%;
+  right: 0;
+  // transform: translateX(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
-    color: ${({ theme }) => theme.colors.primary};
+  // color: ${({ theme }) => theme.colors.primary};
+  color: #ffff;
   font-size: ${({ theme }) => theme.fontSizes.medium};
-
   background: rgba(0, 0, 0, 0.25);
   padding: 4px 10px;
   border-radius: 16px;
+  z-index: 2;
 `;
-
 
 const CircularButton = styled.button`
   background-color: ${({ theme }) => theme.colors.secondary};
   color: ${({ theme }) => theme.colors.primaryText};
-  font-size: 1.25rem; // Increased for visibility
-  font-weight: 600;   // Makes the arrow bold
+  font-size: 1.25rem;
+  font-weight: 600;
   border: none;
   border-radius: 50%;
-  width: 36px;         // Slightly larger for better appearance
+  width: 36px;
   height: 36px;
   display: flex;
   align-items: center;
@@ -112,45 +146,81 @@ const CircularButton = styled.button`
   }
 `;
 
-
-
-
 export default function TopDestinationSection() {
   const cards = [
     {
-      title: "Islamabad",
-      img: sampleImg,
+      title: 'Islamabad',
+      images: [Islamabad1Img],
+      // , Islamabad2Img, Islamabad3Img],
     },
     {
-      title: "Islamabad",
-      img: sampleImg,
+      title: 'Karachi',
+      images: [Karachi1Img],
+      // , Karachi2Img],
     },
     {
-      title: "Islamabad",
-      img: sampleImg,
+      title: 'Lahore',
+      images: [Lahore2Img],
     },
     {
-      title: "Islamabad",
-      img: sampleImg,
+      title: 'Faisalabad',
+      images: [Lyallpur1Img],
+    },
+    {
+      title: 'Multan',
+      images: [Multan1Img],
+    },
+    {
+      title: 'Faisalabad',
+      images: [Lyallpur1Img],
     },
   ];
-
 
   return (
     <Container>
       <Heading>Top Destinations</Heading>
       <CardsGrid>
-        {cards.map((card, index) => (
-          <Card key={index} onClick={() => console.log(`Details: ${card.title}`)}>
-            <CardRight bg={card.img} />
-            <CardTitle>
-              {card.title}
-              <CircularButton onClick={() => console.log(`Go to: ${card.title}`)}>{">"}</CircularButton>
-            </CardTitle>
+        {cards.map((card, index) => {
+          const isSingle = card.images.length === 1;
 
-          </Card>
+          const sliderSettings = {
+            dots: false,
+            arrows: false,
+            autoplay: !isSingle,
+            infinite: !isSingle,
+            speed: 500,
+            autoplaySpeed: 2500,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+          };
 
-        ))}
+          return (
+            <Card
+              key={index}
+              onClick={() => console.log(`Details: ${card.title}`)}
+            >
+              <CardRightSlider {...sliderSettings}>
+                {card.images.map((imgSrc, idx) => (
+                  <SlideWrapper key={idx}>
+                    <SlideImage src={imgSrc} alt={`${card.title} ${idx + 1}`} />
+                  </SlideWrapper>
+                ))}
+              </CardRightSlider>
+
+              <CardTitle>
+                {card.title}
+                <CircularButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log(`Go to: ${card.title}`);
+                  }}
+                >
+                  {'>'}
+                </CircularButton>
+              </CardTitle>
+            </Card>
+          );
+        })}
       </CardsGrid>
     </Container>
   );

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const Container_NoGradient = styled.section`
   position: relative;
@@ -14,7 +14,7 @@ const Container_NoGradient = styled.section`
   // background: ${({ theme }) => theme.colors.secondary};
   color: ${({ theme }) => theme.colors.primaryText};
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     padding: 10px 10px 0 10px;

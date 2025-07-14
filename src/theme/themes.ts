@@ -54,6 +54,7 @@ const baseColors = {
   light: {
     // mainBackground: "#ffffff",
     mainBackground: "#ffffff",
+    whiteText: "#ffffff",
     primaryHeading: "#1a1a1a",
     secondaryHeading: "#333333",
     primaryHeadingRevert: "#ffffff",
@@ -66,6 +67,7 @@ const baseColors = {
   },
   dark: {
     mainBackground: "#1a1a1a",
+    whiteText: "#ffffff",
     primaryHeading: "#ffffff",
     secondaryHeading: "#dddddd",
     primaryHeadingRevert: "#1a1a1a",

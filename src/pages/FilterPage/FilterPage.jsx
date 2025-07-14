@@ -1,20 +1,20 @@
-import Header from "../../components/Header";
+import Header from '../../components/Header';
 // import Container from "../../components/Container";
-import FeaturesSection from "../Login/subcomponents/FeaturesSection";
-import React from "react";
-import styled from "styled-components";
-import AboutSection from "../Login/subcomponents/AboutSection";
-import FooterSection from "../Login/subcomponents/FooterSection";
-import FilterSection from "./subComponents/FilterSection";
-import Container_NoGradient from "../../components/Container_NoGradient";
-import { usePermissions } from "../../context/PermissionsContext";
-import { useNavigate } from "react-router-dom";
-import { checkAuth } from "../../api/checkAuth";
-import { clearAuthToken } from "../../utils/authCookies";
-import { useState } from "react";
-import { useEffect } from "react";
-import { useAuthContext } from "../../context/AuthContext";
-import toast from "react-hot-toast";
+import FeaturesSection from '../Login/subcomponents/FeaturesSection';
+import React from 'react';
+// import styled from "styled-components";
+import AboutSection from '../Login/subcomponents/AboutSection';
+import FooterSection from '../Login/subcomponents/FooterSection';
+import FilterSection from './subComponents/FilterSection';
+import Container_NoGradient from '../../components/Container_NoGradient';
+// import { usePermissions } from "../../context/PermissionsContext";
+// import { useNavigate } from "react-router-dom";
+// import { checkAuth } from "../../api/checkAuth";
+// import { clearAuthToken } from "../../utils/authCookies";
+// import { useState } from "react";
+// import { useEffect } from "react";
+// import { useAuthContext } from "../../context/AuthContext";
+// import toast from "react-hot-toast";
 
 function FilterPage() {
   // Full-width top bar for filter page
@@ -31,12 +31,11 @@ function FilterPage() {
   //   z-index: 0;
   // `;
 
-
-  const { permissions, hasPermission } = usePermissions();
+  // const { permissions, hasPermission } = usePermissions();
   // const { token, setToken } = useAuthContext()
 
   // const navigate = useNavigate()
-  const [authChecked, setAuthChecked] = useState(false);
+  // const [authChecked, setAuthChecked] = useState(false);
 
   // useEffect(() => {
   //   const verifyAuth = async () => {
@@ -71,7 +70,6 @@ function FilterPage() {
   //   navigate('/')
   // };
 
-
   return (
     <>
       {/* Header will be on top  */}
@@ -84,7 +82,6 @@ function FilterPage() {
       {
         // hasPermission("booking.create") &&
         <FilterSection />
-
       }
 
       {/* <FeatureWrapper>
