@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Container_NoGradient from '../../components/Container_NoGradient';
 import Header from '../../components/Header';
 import FooterSection from '../Login/subcomponents/FooterSection';
-import { useTheme } from 'styled-components';
+// import { useTheme } from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 // import RightColumnSection from "../HotelDetails/subcomponents/RightColumnSection";
@@ -46,9 +46,27 @@ const LeftColumnCards = styled.div`
     color: #40a600;
   }
 `;
+const Container = styled.section`
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px 100px 0 100px;
+  background: ${({ theme }) => theme.colors.primary};
+  // background: linear-gradient(
+  //   to top,
+  //   ${({ theme }) => theme.colors.primary} 0%,
+  //   ${({ theme }) => theme.colors.secondary} 100%
+  // );
+  color: ${({ theme }) => theme.colors.primaryText};
+  box-sizing: border-box;
+  overflow: hidden;
 
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    padding: 10px 10px 0 10px;
+  }
+`;
 export default function BookingConfirmed() {
-  const styledTheme = useTheme();
+  // const styledTheme = useTheme();
   const {
     grandTotal,
     // grandTotalWithBuyersGroup
@@ -67,20 +85,23 @@ export default function BookingConfirmed() {
   });
   return (
     <>
-      <Container_NoGradient>
+      <Container>
         <Header />
+      </Container>
+
+      <Container_NoGradient>
         <TopBar>
           <Breadcrumb>
             <Link to="/">Main Page</Link> &gt;
-            <Link to="/#/search"> Search</Link> &gt;
+            {/* <Link to="/#/search"> Search</Link> */}
           </Breadcrumb>
         </TopBar>
         <>
           {/* <div style={{ margin: "auto" }}></div> */}
           <LeftColumnCards>
             <h2>Booking Confirmed!</h2>
-            <h2>Booking Pin: {bookingData?.bookingPin}</h2>
-            <h2>Confirmation Code: {bookingData?.confirmationCode}</h2>
+            {/* <h2>Booking Pin: {bookingData?.bookingPin}</h2> */}
+            <h2>Reference No: {bookingData?.confirmationCode}</h2>
           </LeftColumnCards>
           <div style={{ height: 'auto', overflowY: 'auto' }}>
             {/* <OrderDetail

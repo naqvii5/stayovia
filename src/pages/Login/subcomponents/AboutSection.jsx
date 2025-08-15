@@ -16,21 +16,23 @@ const Container = styled.section`
     padding: 16px;
   }
 `;
-
 const ContentRow = styled.div`
   display: flex;
   width: 100%;
   border-radius: 40px;
   background: ${({ theme }) => theme.colors.primary};
-  // background: linear-gradient(
-  //   to bottom,
-  //   ${({ theme }) => theme.colors.secondary} 0%,
-  //   ${({ theme }) => theme.colors.primary} 100%
-  // );
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.tablet}) {
     flex-direction: row;
+  }
+
+  /* Smallest devices: no background, no rounded corners */
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    // background: transparent;
+    // border-radius: 0;
   }
 `;
 
@@ -42,30 +44,85 @@ const LeftPanel = styled.div`
   justify-content: center;
   gap: 20px;
   position: relative;
-`;
 
-const TitleRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 1rem;
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    flex: 1 1 100%;
+    padding: 24px;
+  }
 
+  /* Smallest devices: ensure text comes first */
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    flex-direction: column;
-    align-items: flex-start;
+    order: 1;
   }
 `;
 
-const DescriptionRow = styled.div`
+const RightPanel = styled.div`
+  flex: 0 0 40%;
+  position: relative;
   display: flex;
-  align-items: flex-start;
-  gap: 2rem;
+  overflow: hidden;
+  border-radius: 0 40px 40px 0;
+  border-left: 1px solid ${({ theme }) => theme.colors.primary};
 
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    flex: 1 1 100%;
+    border-left: 0;
+    border-top: 1px solid ${({ theme }) => theme.colors.primary};
+    border-radius: 0 0 40px 40px;
+  }
+
+  /* Smallest devices: image LAST and no extra panel height */
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    flex-direction: column;
+    order: 2;
+    border-top: 0; /* remove the divider so no background line shows */
+    border-radius: 0; /* no rounded edges on the tiny screen */
+    min-height: 0;
+    height: auto;
   }
 `;
+
+const Image = styled.img`
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  box-sizing: border-box;
+  border-radius: inherit;
+
+  /* Smallest devices: let image size itself without leaving extra space */
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    height: auto; /* prevents extra empty area below */
+    max-height: none;
+  }
+`;
+
+/* lazy wrappers reserve space only where needed */
+const LazyLeft = styled.div`
+  flex: 0 0 60%;
+  min-height: 240px;
+  position: relative;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    flex: 1 1 100%;
+    min-height: auto;
+  }
+`;
+
+const LazyRight = styled.div`
+  flex: 0 0 40%;
+  min-height: 240px;
+  position: relative;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    flex: 1 1 100%;
+  }
+
+  /* Smallest devices: remove enforced height so no background shows below */
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    min-height: 0;
+  }
+`;
+
 const QRColumn = styled.div`
   position: absolute;
   top: 20px;
@@ -99,41 +156,6 @@ const QRInstruction = styled.p`
   font-size: ${({ theme }) => theme.fontSizes.xsmall};
   // color: ${({ theme }) => theme.colors.secondaryText};
   color: white;
-`;
-
-const QRCode = styled.img`
-  width: 100px;
-  height: 100px;
-  object-fit: contain;
-`;
-
-const RightPanel = styled.div`
-  flex: 0 0 40%;
-  position: relative;
-  display: flex;
-`;
-
-const Image = styled.img`
-  width: 100%;
-  height: 100%; // reduced height
-  // max-height: 280px;
-  border-radius: 0px 40px 40px 0px;
-  border-width: 6px 0 6px 6px;
-  border-left: solid 1px ${({ theme }) => theme.colors.primary};
-  // border-color: ${({ theme }) => theme.colors.primaryHeadingRevert};
-  object-fit: cover;
-`;
-// lazy wrappers reserve space so layout won’t collapse
-const LazyLeft = styled.div`
-  flex: 0 0 60%;
-  min-height: 240px; /* adjust to your panel’s expected height */
-  position: relative;
-`;
-
-const LazyRight = styled.div`
-  flex: 0 0 40%;
-  min-height: 240px;
-  position: relative;
 `;
 
 export default function AboutSection() {

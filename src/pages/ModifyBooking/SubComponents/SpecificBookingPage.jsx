@@ -121,17 +121,17 @@ export function SpecificBookingPage({ selectedReservation, onBack }) {
   ).toUpperCase();
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [isEditOpen, setIsEditOpen] = useState(false);
+  // const [isEditOpen, setIsEditOpen] = useState(false);
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [isCancelOpen, setIsCancelOpen] = useState(false);
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [isGuestOpen, setIsGuestOpen] = useState(false);
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [dates, setDates] = useState({
-    checkIn: b.checkIn,
-    checkOut: b.checkOut,
-    nights: b.nights || null,
-  });
+  // const [dates, setDates] = useState({
+  //   checkIn: b.checkIn,
+  //   checkOut: b.checkOut,
+  //   nights: b.nights || null,
+  // });
 
   return (
     <Container>
@@ -305,12 +305,12 @@ export function SpecificBookingPage({ selectedReservation, onBack }) {
             <EditSub>You can view or change your reservations.</EditSub>
 
             <ActionList>
-              <ActionItem type="button" onClick={() => setIsEditOpen(true)}>
+              {/* <ActionItem type="button" onClick={() => setIsEditOpen(true)}>
                 <ActionIcon>
                   <FaCalendarAlt />
                 </ActionIcon>
                 <ActionText>Edit Dates</ActionText>
-              </ActionItem>
+              </ActionItem> */}
 
               <ActionItem type="button" onClick={() => setIsCancelOpen(true)}>
                 <ActionIcon>
@@ -335,7 +335,7 @@ export function SpecificBookingPage({ selectedReservation, onBack }) {
         </RightContainer>
       </Wrapper>
       {/* sheet */}
-      <EditDatesSheet
+      {/* <EditDatesSheet
         open={isEditOpen}
         checkIn={dates.checkIn}
         checkOut={dates.checkOut}
@@ -344,7 +344,7 @@ export function SpecificBookingPage({ selectedReservation, onBack }) {
         onApply={(res) => setDates(res)} // persist to API here if needed
         // months={2}                  // or leave auto
         title="Edit Dates"
-      />
+      /> */}
       {/* Cancellation Modal */}
       <CancelBookingModal
         open={isCancelOpen}
@@ -508,19 +508,23 @@ const ActionText = styled.span`
 `;
 
 const HeaderRow = styled.div`
-  position: relative;
   width: 100%;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* left | center | right */
   align-items: center;
-  justify-content: center;
+  column-gap: 12px;
   min-height: 40px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    grid-template-columns: 1fr; /* stack */
+    row-gap: 0.75rem;
+    justify-items: center; /* center the title */
+  }
 `;
 
 const BackButton = styled.button`
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  grid-column: 1 / 2; /* left column */
+  justify-self: start;
   background: transparent;
   color: ${({ theme }) => theme.colors.primary};
   border: 1px solid ${({ theme }) => theme.colors.primary};
@@ -532,15 +536,26 @@ const BackButton = styled.button`
     opacity: 0.9;
   }
 
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    justify-self: start; /* stays left when stacked */
+  }
+
   @media (max-width: 520px) {
     padding: 0.4rem 0.8rem;
   }
 `;
 
 const Title = styled.h2`
+  grid-column: 2 / 3; /* middle column on desktop */
   margin: 0;
   color: ${({ theme }) => theme.colors.primary};
   font-size: ${({ theme }) => theme.fontSizes.xlarge};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    grid-column: 1 / -1; /* full width when stacked */
+    text-align: center;
+  }
+
   @media (max-width: 520px) {
     font-size: ${({ theme }) => theme.fontSizes.medium};
   }

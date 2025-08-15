@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // src/pages/SearchResultsPage.jsx
 import React, { useEffect, useState, useMemo } from 'react';
 import debounce from 'lodash.debounce'; // ensure `npm install lodash.debounce`
@@ -169,6 +170,7 @@ export default function SearchResultsPage() {
   const [selectedType, setSelectedType] = useState(0);
   const [freeCancelOnly, setFreeCancelOnly] = useState(false);
   const [nonRefundOnly, setNonRefundOnly] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [currentPage, setCurrentPage] = useState(1);
   const location = useLocation();
   const navigate = useNavigate();
@@ -449,9 +451,9 @@ export default function SearchResultsPage() {
             withDestination={true}
           />
           <FilterButton onClick={() => setFilterOpen(true)}>
-            Filters
+            FILTERS
           </FilterButton>
-          <FilterButton onClick={resetFilters}>Reset Filters</FilterButton>
+          {/* <FilterButton onClick={resetFilters}>Reset Filters</FilterButton> */}
         </TopBar>
         <ContentArea>
           <Sidebar>
@@ -512,6 +514,7 @@ export default function SearchResultsPage() {
 }
 
 // — Layout components —
+// TopBar: stack on tablet+, make children full-width
 const TopBar = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.colors.primary};
@@ -519,86 +522,58 @@ const TopBar = styled.div`
   border-radius: 0.8rem;
   box-shadow: 0 1px 3px ${({ theme }) => theme.colors.primary};
   display: flex;
-  gap: 10px;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap; /* lets children wrap when space is tight */
+
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    width: 100%;
+    flex-direction: column; /* stack */
+    align-items: stretch; /* stretch children */
+    padding: 0.75rem 1rem;
+
+    /* make ALL direct children take full width, including your
+       <FilterSearchCardForSearchPage /> component */
+    & > * {
+      width: 100%;
+    }
   }
 `;
+
+// Breadcrumb: fixed width on desktop, full width on tablet and below
 const Breadcrumb = styled.div`
   width: 40%;
   color: ${({ theme }) => theme.colors.whiteText};
+
   a {
     text-decoration: none;
     margin: 0 0.5rem;
   }
-`;
-const Row1 = styled.div`
-  // display: grid;
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  gap: 1rem;
-  /* For screens > 768px, use percentage widths */
-  // grid-template-areas: 'dates rooms search';
-  // grid-template-columns: 40% 30% 30%;
-  align-items: end;
 
-  /* Tablet and below (<=768px): two-row layout */
-  // @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-  // grid-template-areas: 'dates rooms search search';
-  // grid-template-columns: repeat(3, 1fr);
-  // }
-
-  /* Mobile (<=450px): single column */
-  // @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-  // grid-template-areas:
-  // 'dates'
-  // 'rooms'
-  // 'search';
-  // grid-template-columns: 1fr;
-  // }
-`;
-const SearchButton = styled.button`
-  grid-area: search;
-  background: ${({ theme, disabled }) =>
-    disabled ? '#aaa' : theme.colors.primary};
-  color: #fff;
-  border: none;
-  padding: 0.1rem 1.5rem;
-  align-self: stretch;
-  border-radius: 0.8rem;
-  font-size: ${({ theme }) => theme.fontSizes.small};
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  transform: translateY(0);
-  transition: all 0.1s ease-in;
-
-  &:active {
-    transform: translateY(2px); /* press down effect */
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    display: none;
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    width: 100%;
+    margin-bottom: 0.5rem; /* breathing room from the search card */
   }
 `;
+
+// FilterButton: show only on tablet and below and span full width there
 const FilterButton = styled.button`
   display: none;
+
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     display: block;
+    width: 100%;
+    margin-top: 0.5rem;
   }
-  background: ${({ theme }) => theme.colors.primary};
+
+  background: ${({ theme }) => theme.colors.secondary};
   color: #fff;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   cursor: pointer;
 `;
+
 const ContentArea = styled.div`
   display: flex;
   flex-direction: row-reverse;

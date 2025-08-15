@@ -24,6 +24,7 @@ import FeaturesSection from '../../Login/subcomponents/FeaturesSection';
 import AboutSection from '../../Login/subcomponents/AboutSection';
 import TopDestinationSection from '../../Login/subcomponents/TopDestinationSection';
 import { FaHotel } from 'react-icons/fa';
+import { FilterSearchCardForSearchPage } from './../../../components/FilterSearchCardForSearchPage';
 
 // Main container with gradient
 
@@ -76,82 +77,20 @@ const Card = styled.div`
     gap: 0.5rem;
   }
 `;
-
 const InnerContent = styled.div`
   position: relative;
   z-index: 5;
-
   width: 100%;
   margin: 5px auto;
   padding: 20px 100px 0 100px;
-
   color: ${({ theme }) => theme.colors.primaryText};
   box-sizing: border-box;
-  overflow: hidden;
-
+  overflow: visible; /* allow calendar popover to show */
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     padding: 10px 10px 0 10px;
   }
-  // max-width: 1400px; // You can adjust this
-  // margin: 0 auto;
-  // width: 100%;
-  // padding: 0; // Keep same spacing as Card if needed
-  // box-sizing: border-box;
-`;
-const Separator = styled.div`
-  height: 2rem;
-  z-index: 5;
-
-  border-bottom: 1px solid ${({ theme }) => theme.colors.secondaryText}33;
-  margin: 3rem 0;
 `;
 
-const Title = styled.h1`
-  z-index: 5;
-
-  font-size: ${({ theme }) => theme.fontSizes.xxlarge};
-  font-family: ${({ theme }) => theme.fonts.primaryHeading};
-  text-align: center;
-  margin-bottom: 2rem;
-  color: ${({ theme }) => theme.colors.secondary};
-`;
-
-// Reusable input style
-const StyledInput = styled.input`
-  width: 100%;
-  padding: 0.75rem 2.5rem 0.75rem 0.75rem;
-  border-radius: 0.8rem;
-  // border: 0.5px solid ${({ theme }) => theme.colors.secondaryText};
-  border: 0.5px solid #dddddd;
-  background: ${({ theme }) => theme.colors.mainBackground};
-  color: ${({ theme }) => theme.colors.primaryText};
-  font-size: ${({ theme }) => theme.fontSizes.small};
-  height: 100%;
-  box-sizing: border-box;
-
-  &::placeholder {
-    color: ${({ theme }) => theme.colors.secondaryText};
-    font-size: ${({ theme }) => theme.fontSizes.xsmall};
-  }
-
-  &:focus {
-    border-color: ${({ theme }) => theme.colors.primary};
-    outline: none;
-  }
-`;
-
-// Title and Tagline styled-components
-const Tagline = styled.h1`
-  grid-area: tagline;
-  z-index: 5;
-  color: ${({ theme }) => theme.colors.primary};
-  font-size: ${({ theme }) => theme.fontSizes.xxlarge};
-  // font-family: ${({ theme }) => theme.fonts.primaryText};
-  text-align: center;
-  margin: 0 0 1.5rem;
-`;
-
-// Filter row layout: tagline, services, then filters
 const Row1 = styled.div`
   display: grid;
   z-index: 5;
@@ -162,8 +101,10 @@ const Row1 = styled.div`
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-
+  overflow: visible; /* don't clip popovers */
   gap: 1rem;
+
+  /* Desktop: 4 columns */
   grid-template-areas:
     'tagline tagline tagline tagline'
     'services services services services'
@@ -171,27 +112,26 @@ const Row1 = styled.div`
   grid-template-columns: 40% 25% 15% 15%;
   align-items: end;
 
+  /* Tablet & below: single "mobile" row */
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    grid-template-areas:
-      'tagline tagline tagline tagline'
-      'services services services services'
-      'dest dest dest dest'
-      'dates rooms search search';
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     grid-template-areas:
       'tagline'
       'services'
-      'dest'
-      'dates'
-      'rooms'
-      'search';
+      'mobile';
     grid-template-columns: 1fr;
   }
 `;
 
+const Tagline = styled.h1`
+  grid-area: tagline;
+  z-index: 5;
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: ${({ theme }) => theme.fontSizes.xxlarge};
+  text-align: center;
+  margin: 0 0 1.5rem;
+`;
+
+/* Make sure services actually occupies its grid area */
 const ServiceContainer = styled.div`
   grid-area: services;
   position: relative;
@@ -199,6 +139,70 @@ const ServiceContainer = styled.div`
   gap: 1rem;
   width: 100%;
   flex-wrap: wrap;
+`;
+
+/* Desktop-only wrapper */
+const DesktopFilters = styled.div`
+  display: contents; /* pass children into the grid */
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    display: none;
+  }
+`;
+
+/* Mobile/tablet-only wrapper */
+const MobileFilters = styled.div`
+  display: none;
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    display: block;
+    grid-area: mobile; /* span the full width row */
+    width: 100%;
+  }
+`;
+
+const DestCol = styled.div`
+  grid-area: dest;
+  min-width: 0;
+`;
+const DatesCol = styled.div`
+  grid-area: dates;
+  position: relative; /* anchor calendar popover */
+  z-index: 5;
+  min-width: 0;
+`;
+const RoomsCol = styled.div`
+  grid-area: rooms;
+  min-width: 0;
+`;
+const SearchCol = styled.div`
+  grid-area: search;
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+`;
+
+const SearchButton = styled.button`
+  width: 100%;
+  background: ${({ theme, disabled }) =>
+    disabled ? '#aaa' : theme.colors.primary};
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.8rem;
+  font-size: ${({ theme }) => theme.fontSizes.small};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 48px;
+`;
+
+const Separator = styled.div`
+  height: 2rem;
+  z-index: 5;
+
+  border-bottom: 1px solid ${({ theme }) => theme.colors.secondaryText}33;
+  margin: 3rem 0;
 `;
 
 const ServiceTab = styled.button`
@@ -213,129 +217,6 @@ const ServiceTab = styled.button`
   color: ${({ selected, theme }) =>
     selected ? theme.colors.secondary : theme.colors.primaryHeading};
   border: 1px solid rgba(255, 255, 255, 0.7);
-`;
-
-const SearchButton = styled.button`
-  grid-area: search;
-  background: ${({ theme, disabled }) =>
-    disabled ? '#aaa' : theme.colors.primary};
-  color: #fff;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.8rem;
-  font-size: ${({ theme }) => theme.fontSizes.small};
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-// Additional parameters heading
-const Additional = styled.h3`
-  margin: 1.5rem 0 0.5rem;
-  z-index: 5;
-
-  font-family: ${({ theme }) => theme.fonts.primaryHeading};
-  font-size: ${({ theme }) => theme.fontSizes.small};
-  color: ${({ theme }) => theme.colors.primaryHeading};
-`;
-
-// Row2 and Row3
-const Row2 = styled.div`
-  display: grid;
-  gap: 1rem;
-  z-index: 5;
-
-  margin-bottom: 1rem;
-  grid-template-areas: 'citizen rating';
-  grid-template-columns: 1fr 1fr;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.desktop}) {
-    grid-template-areas:
-      'citizen'
-      'rating';
-    grid-template-columns: 1fr;
-  }
-`;
-
-const Row3 = styled.div`
-  margin-bottom: 1rem;
-  z-index: 5;
-`;
-
-// Select and other controls
-const ControlSelect = styled.select`
-  grid-area: ${({ area }) => area};
-  width: 100%;
-  padding: 0.75rem 2.5rem 0.75rem 0.75rem;
-  border-radius: 0.8rem;
-  background: ${({ theme }) => theme.colors.mainBackground};
-  // border: 0.5px solid ${({ theme }) => theme.colors.secondaryText};
-  border: 0.5px solid #dddddd;
-  color: ${({ theme }) => theme.colors.primaryText};
-  font-size: ${({ theme }) => theme.fontSizes.xsmall};
-
-  &:focus {
-    border-color: ${({ theme }) => theme.colors.primary};
-    outline: none;
-  }
-`;
-
-const CancelLabel = styled.label`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: ${({ theme }) => theme.fontSizes.xsmall};
-  color: ${({ theme }) => theme.colors.primaryText};
-
-  input {
-    margin: 0;
-  }
-`;
-
-// const SearchButton = styled.button`
-//   grid-area: search;
-//   background: ${({ theme, disabled }) =>
-//     disabled ? '#aaa' : theme.colors.primary};
-//   color: #fff;
-//   border: none;
-//   padding: 0.75rem 1.5rem;
-//   align-self: stretch;
-//   border-radius: 0.8rem;
-//   font-size: ${({ theme }) => theme.fontSizes.small};
-//   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   gap: 0.75rem;
-//   transform: translateY(0);
-//   transition: all 0.1s ease-in;
-
-//   &:active {
-//     transform: translateY(2px); /* press down effect */
-//     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-//   }
-
-//   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-//     display: none;
-//   }
-// `;
-
-const FullSearchButton = styled(SearchButton)`
-  display: none;
-  margin-top: 1rem;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    display: flex;
-  }
-`;
-const SelectedOption = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  // margin-left: 2rem;
-  color: ${({ theme }) => theme.colors.primary};
-  font-size: ${({ theme }) => theme.fontSizes.medium};
-  cursor: pointer;
 `;
 
 // Component
@@ -513,25 +394,59 @@ export default function FilterSection() {
               ))}
             </ServiceContainer>
 
-            <DestinationSection
-              dest={destination}
-              setDest={setDestination}
-              setCityName={setCityName}
-            />
-            <DateSelectionSection
-              onDatesChange={({ checkIn, checkOut, nights }) =>
-                setDates({ checkIn, checkOut, nights })
-              }
-            />
-            <RoomSelectionComp rooms={roomsInfo} setRooms={setRoomsInfo} />
-            <SearchButton disabled={isSearching} onClick={handleSearch}>
-              {isSearching ? <Spinner /> : "Let's go"}
-            </SearchButton>
+            {/* Desktop / large screens */}
+            <DesktopFilters>
+              <DestCol>
+                <DestinationSection
+                  dest={destination}
+                  setDest={setDestination}
+                  setCityName={setCityName}
+                />
+              </DestCol>
+
+              <DatesCol>
+                <DateSelectionSection
+                  onDatesChange={({ checkIn, checkOut, nights }) =>
+                    setDates({ checkIn, checkOut, nights })
+                  }
+                />
+              </DatesCol>
+
+              <RoomsCol>
+                <RoomSelectionComp rooms={roomsInfo} setRooms={setRoomsInfo} />
+              </RoomsCol>
+
+              <SearchCol>
+                <SearchButton disabled={isSearching} onClick={handleSearch}>
+                  {isSearching ? <Spinner /> : 'Search'}
+                </SearchButton>
+              </SearchCol>
+            </DesktopFilters>
+
+            {/* Tablet & below */}
+            <MobileFilters>
+              <FilterSearchCardForSearchPage
+                destination={destination}
+                setDestination={setDestination}
+                setCityName={setCityName}
+                dates={dates}
+                setDates={setDates}
+                roomsInfo={roomsInfo}
+                setRoomsInfo={setRoomsInfo}
+                rating={rating}
+                setRating={setRating}
+                freeCancellation={freeCancellation}
+                setFreeCancellation={setFreeCancellation}
+                isSearching={isSearching}
+                handleSearch={handleSearch}
+                withDestination={true}
+              />
+            </MobileFilters>
           </Row1>
 
-          <FullSearchButton disabled={isSearching} onClick={handleSearch}>
+          {/* <FullSearchButton disabled={isSearching} onClick={handleSearch}>
             {isSearching ? <Spinner /> : 'Search'}
-          </FullSearchButton>
+          </FullSearchButton> */}
         </Card>
         <Separator />
 

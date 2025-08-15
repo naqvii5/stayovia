@@ -61,6 +61,9 @@ const Description = styled.p`
   font-size: ${({ theme }) => theme.fontSizes.xsmall};
   line-height: 1.4;
 `;
+const NoWrap = styled.span`
+  white-space: nowrap;
+`;
 
 const Payments = styled.div`
   display: flex;
@@ -349,6 +352,10 @@ export default function FooterSection() {
               comply with and be bound by these Terms and Conditions. Please
               review them carefully before making a booking.
             </SectionText>
+            <SectionTitle>Address:</SectionTitle>
+            <SectionText>
+              3rd Floor, Block 9-E, F-6 Markaz, Super Market, Islamabad.
+            </SectionText>
             <SectionTitle>Definitions</SectionTitle>
             <BulletList>
               <li>
@@ -582,8 +589,10 @@ export default function FooterSection() {
           <SectionMid>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <Description>
-                Stayovia is a travel tech brand of Purple Technologies (Pvt) Ltd
+                Stayovia is a travel tech brand of{' '}
+                <NoWrap>Purple Technologies (Pvt) Ltd</NoWrap>
               </Description>
+
               <SocialIcons>
                 <SocialIcon href="https://facebook.com" target="_blank">
                   <FaFacebookF size={16} />

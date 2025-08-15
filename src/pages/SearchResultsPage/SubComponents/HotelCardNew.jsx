@@ -351,8 +351,12 @@ const RateplanColumnDataDiv = styled.div`
   // justify-content: space-between;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    // flex-direction: row;
+    flex-direction: row;
     justify-content: space-evenly;
+  }
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    flex-direction: column;
+    align-items: center;
   }
 `;
 

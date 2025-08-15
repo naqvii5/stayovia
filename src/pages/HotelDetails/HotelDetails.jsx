@@ -2,7 +2,7 @@
 import React from 'react';
 import Container_NoGradient from '../../components/Container_NoGradient';
 import Header from '../../components/Header';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { MyButton } from '../../components/MyButton';
 // import { useThemeContext } from "../../theme/ThemeProvider";
@@ -57,7 +57,7 @@ import { Slider as MuiSlider, Box, Modal } from '@mui/material';
 import {
   Table,
   TableHead,
-  TableBody,
+  // TableBody,
   TableRow,
   TableCell,
   TableContainer,
@@ -73,17 +73,17 @@ import LeftCard1Section from './subcomponents/LeftCard1Section';
 import { useHotelSearch } from '../../context/HotelSearchContext';
 // import { da } from 'date-fns/locale';
 import RoomTypeRatePlanSection from './subcomponents/RoomTypeRatePlanSection';
-import DestinationSection from '../FilterPage/subComponents/DestinationSection';
-import DateSelectionSection from '../FilterPage/subComponents/DateSelectionSection';
-import RoomSelectionComp from '../FilterPage/subComponents/RoomSelectionComp';
+// import DestinationSection from '../FilterPage/subComponents/DestinationSection';
+// import DateSelectionSection from '../FilterPage/subComponents/DateSelectionSection';
+// import RoomSelectionComp from '../FilterPage/subComponents/RoomSelectionComp';
 import toast from 'react-hot-toast';
-import { hotelSearch } from '../../api/hotelSearch';
-import Spinner from '../../components/Spinner';
+// import { hotelSearch } from '../../api/hotelSearch';
+// import Spinner from '../../components/Spinner';
 import { specificHotelSearch } from '../../api/specificHotelSearch';
 import { FilterSearchCardForSearchPage } from '../../components/FilterSearchCardForSearchPage';
 
 export default function HotelDetails() {
-  const { id } = useParams();
+  // const { id } = useParams();
   const {
     setGrandTotal,
     // setGrandTotalWithBuyersGroup
@@ -121,6 +121,7 @@ export default function HotelDetails() {
   const [freeCancellation, setFreeCancellation] = useState(false);
   // 1) Lifted state for every filter
   const [destination, setDestination] = useState(payload.AccommodationId);
+  // eslint-disable-next-line no-unused-vars
   const [cityName, setCityName] = useState('');
   const [dates, setDates] = useState({
     checkIn: payload.CheckIn,
@@ -207,6 +208,7 @@ export default function HotelDetails() {
           });
         }
       })
+      // eslint-disable-next-line no-unused-vars
       .catch((err) => {
         toast.dismiss(toastId);
         setIsSearching(false);
@@ -341,6 +343,7 @@ export default function HotelDetails() {
 
   // ——————————————————————————————————
   // 3) Update quantity (increment/decrement)
+  // eslint-disable-next-line no-unused-vars
   function updateCartQty(key, delta, idx, roomCapacity) {
     // We also receive `idx` here to match the same key
     setCart((prev) =>
@@ -836,109 +839,11 @@ export default function HotelDetails() {
                     </Modal>
                   </SliderContainer>
 
-                  {/* <Modal
-                    open={Boolean(hoveredImg)}
-                    onClose={() => setHoveredImg(null)}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Box
-                      component="img"
-                      src={hoveredImg}
-                      sx={{
-                        maxWidth: '80vw',
-                        maxHeight: '80vh',
-                        borderRadius: '8px',
-                      }}
-                    />
-                  </Modal> */}
-
-                  {/* current image */}
-                  {/* <Box
-                    component="img"
-                    src={
-                      baseImageURL +
-                      specificHotelData?.accommodationData?.images[imageIndex]
-                        ?.ImageURL
-                    }
-                    alt={`${specificHotelData?.accommodationData?.name}
-                     image ${imageIndex}`}
-                    sx={{
-                      width: '100%',
-                      height: '55vh',
-                      objectFit: 'fill',
-                      borderRadius: '0.8rem 0 0 0.8rem',
-                      border: `0.5px solid ${
-                        styledTheme.mode === 'light'
-                          ? '#e9e9e9'
-                          : styledTheme.colors.cardColor
-                      }`,
-                    }}
-                  /> */}
-
-                  {/* MUI slider to pick an image */}
-                  {/* centered MUI slider */}
-                  {/* {specificHotelData?.accommodationData?.images.length > 1 && (
-                    <MuiSlider
-                      value={imageIndex}
-                      min={0}
-                      color="primary"
-                      max={
-                        specificHotelData?.accommodationData?.images.length - 1
-                      }
-                      step={1}
-                      marks={specificHotelData?.accommodationData?.images.map(
-                        (_, idx) => ({ value: idx })
-                      )}
-                      onChange={(_, val) => setImageIndex(val)}
-                      aria-labelledby="image-slider"
-                      size="small"
-                      sx={{
-                        position: 'absolute',
-                        bottom: 16,
-                        left: 0,
-                        right: 0,
-                        width: '50%',
-                        mx: 'auto',
-                        opacity: 0.7, // keep the unfilled rail subtle
-                        color: styledTheme.colors.primary,
-                        '& .MuiSlider-thumb': {
-                          boxShadow: 'none', // optional: remove default shadow
-                        },
-                        '& .MuiSlider-mark, & .MuiSlider-track, & .MuiSlider-thumb':
-                          {
-                            backgroundColor: styledTheme.colors.primary,
-                          },
-                        '& .MuiSlider-rail': {
-                          opacity: 0.1, // keep the unfilled rail subtle
-                        },
-                      }}
-                    />
-                  )} */}
-
                   <RatingRibbon>
                     {specificHotelData.accommodationData.Rating}
                   </RatingRibbon>
                 </Card2ImageSlider>
 
-                {/* <Card2HotelSpecifications>
-                  <SpecItem>
-                    Rating:{" "}
-                    {specificHotelData.accommodationData.Rating <= 5 && "Good"}
-                    {specificHotelData.accommodationData.Rating > 5 &&
-                      specificHotelData.accommodationData.Rating <= 7 &&
-                      "Very Good"}
-                    {specificHotelData.accommodationData.Rating > 7 &&
-                      specificHotelData.accommodationData.Rating < 10 &&
-                      "Excellent"}
-                  </SpecItem>
-                  <SpecItem>
-                    City : {specificHotelData.accommodationData.city.CityName}
-                  </SpecItem>
-                </Card2HotelSpecifications> */}
                 <Card2HotelSpecifications>
                   <SpecItem>
                     Check-In: {specificHotelData.accommodationData.CheckInFrom}
@@ -953,6 +858,7 @@ export default function HotelDetails() {
                     {specificHotelData?.accommodationData?.facilities?.length >
                       0 &&
                       specificHotelData?.accommodationData?.facilities?.map(
+                        // eslint-disable-next-line no-unused-vars
                         (facility, i) => getFacilityIcon(facility?.FacilityName)
                       )}
                   </SpecItemFacilities>
@@ -1037,6 +943,7 @@ export default function HotelDetails() {
                           </div>
                           <FeatureList>
                             {room?.Facilities?.length > 0 &&
+                              // eslint-disable-next-line no-unused-vars
                               room?.Facilities?.map((facility, i) =>
                                 getFacilityIcon(facility?.FacilityName)
                               )}
@@ -1048,77 +955,82 @@ export default function HotelDetails() {
 
                     <Card3RoomTypeTable>
                       {room.rateplans.length > 0 ? (
-                        <TableContainer
-                          component={Paper}
-                          sx={{
-                            width: '100%',
-                            margin: ' 0 0 30px 0',
-                            backgroundColor: styledTheme.colors.cardColor,
-                            borderRadius: '1rem',
-                            border: `2px solid ${styledTheme.colors.cardColor2}`,
-                            borderBottom: `0.1px solid ${styledTheme.colors.primary}`,
-                          }}
-                        >
-                          <h3
-                            style={{
-                              margin: '10px 10px',
-                              color: styledTheme.colors.primaryText,
-                            }}
-                          >
-                            Available Rate Plan(s)
-                          </h3>
-                          <Table
-                            size="large"
+                        <ResponsiveTableFix>
+                          <TableContainer
+                            className="rp-table"
+                            component={Paper}
                             sx={{
-                              tableLayout: 'fixed',
                               width: '100%',
+                              margin: '0 0 30px 0',
+                              backgroundColor: styledTheme.colors.cardColor,
+                              borderRadius: '1rem',
+                              border: `2px solid ${styledTheme.colors.cardColor2}`,
+                              borderBottom: `0.1px solid ${styledTheme.colors.primary}`,
+                              /* no horizontal overflow—cards handle small screens */
+                              overflowX: 'visible',
                             }}
                           >
-                            <TableHead>
-                              <TableRow
-                                sx={{
-                                  backgroundColor:
-                                    styledTheme.colors.cardColor2,
-                                }}
-                              >
-                                {[
-                                  'Room',
-                                  'Breakfast',
-                                  'Cancellation',
-                                  'Total Price',
-                                  'Pax',
-                                  'Refundable',
-                                  'Select',
-                                ].map((h) => (
-                                  <TableCell
-                                    key={h}
-                                    sx={{
-                                      color: '#fff',
-                                      backgroundColor:
-                                        styledTheme.colors.primary,
-                                      // fontWeight: "bold",
-                                    }}
-                                  >
-                                    <h2> {h}</h2>
-                                  </TableCell>
-                                ))}
-                              </TableRow>
-                            </TableHead>
-                            <RoomTypeRatePlanSection
-                              room={room}
-                              cart={cart}
-                              setCart={setCart}
-                              // applyMarginFunc={applyMarginFunc}
-                              // applyExchange={applyExchange}
-                              updateCartQty={updateCartQty}
-                              addRatePlan={addRatePlan}
-                              makeKey={makeKey}
-                              // buyersGroupData={buyersGroupData}
-                              cartHasRefundable={cartHasRefundable}
-                              cartHasNonRefundable={cartHasNonRefundable}
-                            />
-                          </Table>
-                        </TableContainer>
+                            <h3
+                              style={{
+                                margin: '10px 10px',
+                                color: styledTheme.colors.primaryText,
+                              }}
+                            >
+                              Available Rate Plan(s)
+                            </h3>
+                            <Table
+                              size="large"
+                              sx={{
+                                tableLayout: 'fixed',
+                                width: '100%',
+                              }}
+                            >
+                              <TableHead>
+                                <TableRow
+                                  sx={{
+                                    backgroundColor:
+                                      styledTheme.colors.cardColor2,
+                                  }}
+                                >
+                                  {[
+                                    'Room',
+                                    'Breakfast',
+                                    'Cancellation',
+                                    'Total Price',
+                                    'Pax',
+                                    'Refundable',
+                                    'Select',
+                                  ].map((h) => (
+                                    <TableCell
+                                      key={h}
+                                      sx={{
+                                        color: '#fff',
+                                        backgroundColor:
+                                          styledTheme.colors.primary,
+                                        // fontWeight: "bold",
+                                      }}
+                                    >
+                                      <h2> {h}</h2>
+                                    </TableCell>
+                                  ))}
+                                </TableRow>
+                              </TableHead>
+                              <RoomTypeRatePlanSection
+                                room={room}
+                                cart={cart}
+                                setCart={setCart}
+                                // applyMarginFunc={applyMarginFunc}
+                                // applyExchange={applyExchange}
+                                updateCartQty={updateCartQty}
+                                addRatePlan={addRatePlan}
+                                makeKey={makeKey}
+                                // buyersGroupData={buyersGroupData}
+                                cartHasRefundable={cartHasRefundable}
+                                cartHasNonRefundable={cartHasNonRefundable}
+                              />
+                            </Table>
+                          </TableContainer>
+                        </ResponsiveTableFix>
                       ) : (
                         <div
                           style={{
@@ -1162,30 +1074,43 @@ export default function HotelDetails() {
 
 // Breadcrumb / Top bar
 const TopBar = styled.div`
-  position: sticky;
-  top: 0;
-  left: 0; /* stick to the very left */
-  // width: 100%; /* full-width */
-  z-index: 1000; /* above everything else */
   width: 100%;
   background: ${({ theme }) => theme.colors.primary};
   padding: 1rem 2rem;
   border-radius: 0.8rem;
   box-shadow: 0 1px 3px ${({ theme }) => theme.colors.primary};
   display: flex;
-  gap: 10px;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap; /* lets children wrap when space is tight */
+
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    width: 100%;
+    flex-direction: column; /* stack */
+    align-items: stretch; /* stretch children */
+    padding: 0.75rem 1rem;
+
+    /* make ALL direct children take full width, including your
+       <FilterSearchCardForSearchPage /> component */
+    & > * {
+      width: 100%;
+    }
   }
 `;
+
+// Breadcrumb: fixed width on desktop, full width on tablet and below
 const Breadcrumb = styled.div`
   width: 40%;
   color: ${({ theme }) => theme.colors.whiteText};
+
   a {
     text-decoration: none;
     margin: 0 0.5rem;
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    width: 100%;
+    margin-bottom: 0.5rem; /* breathing room from the search card */
   }
 `;
 
@@ -1339,16 +1264,16 @@ const Card3 = styled.div`
 `;
 
 const RoomTypeData = styled.div`
-      display: flex;
-      flex-direction: row;
-      // gap: 0px;
-      @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-        flex - wrap: wrap;
+  display: flex;
+  flex-direction: row;
+  // gap: 0px;
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    flex-wrap: wrap;
   }
-      `;
+`;
 const RoomTypeCard = styled.div`
   display: flex;
-  padding: 0px;
+  padding: 10px 0px;
   border: 1px solid
     ${({ theme }) =>
       theme.mode == 'light' ? '#e9e9e9' : theme.colors.secondaryText};
@@ -1357,6 +1282,11 @@ const RoomTypeCard = styled.div`
   border-radius: 0.8rem;
   border-top: 2px solid ${({ theme }) => theme.colors.primary};
   border-bottom: 2px solid ${({ theme }) => theme.colors.primary};
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    flex-direction: column;
+    height: 100%;
+    // gap: 2rem;
+  }
 `;
 const ImgWrapper = styled.div`
   flex: 0 0 30%;
@@ -1374,6 +1304,9 @@ const DetailsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    border: none;
+  }
 `;
 const FeatureList = styled.div`
   display: flex;
@@ -1389,12 +1322,27 @@ const FeatureItem = styled.div`
 `;
 
 const Card3RoomTypeTable = styled.div`
-  overflow: hidden;
   width: 100%;
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    overflow: auto;
+  overflow-x: auto; /* horizontal scroll when needed */
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 1rem;
+
+  /* nicer thin scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: ${({ theme }) => theme.colors.cardColor2} transparent;
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.colors.cardColor2};
+    border-radius: 999px;
   }
 `;
+
 const Container = styled.section`
   position: relative;
   width: 100%;
@@ -1414,6 +1362,114 @@ const Container = styled.section`
     padding: 10px 10px 0 10px;
   }
 `;
+// replace your existing ResponsiveTableFix with this:
+const ResponsiveTableFix = styled.div`
+  width: 100%;
+
+  /* Desktop defaults */
+  .rp-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: auto; /* natural sizing */
+  }
+  .rp-table th,
+  .rp-table td {
+    padding: 12px 14px;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    line-height: 1.35;
+    vertical-align: top;
+  }
+
+  /* Tablet & below: vertical “header | value” layout */
+  @media (max-width: 900px) {
+    .rp-table thead {
+      display: none;
+    }
+
+    .rp-table,
+    .rp-table tbody,
+    .rp-table tr,
+    .rp-table td {
+      display: block;
+      width: 100%;
+    }
+
+    .rp-table tr {
+      background: ${({ theme }) => theme.colors.cardColor};
+      border: 1px solid ${({ theme }) => theme.colors.cardColor2};
+      border-radius: 12px;
+      padding: 4px 0; /* inner spacing comes from cells */
+      margin-bottom: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      overflow: hidden; /* prevent bleed */
+    }
+
+    /* Each cell becomes: [label | value] */
+    .rp-table td {
+      display: grid;
+      grid-template-columns: 9.5rem 1fr; /* header | value */
+      align-items: start;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px dashed ${({ theme }) => theme.colors.cardColor2};
+    }
+    .rp-table td:last-child {
+      border-bottom: 0;
+    }
+
+    /* Labels (headers on the left) */
+    .rp-table td::before {
+      font-weight: 700;
+      color: ${({ theme }) => theme.colors.secondaryText};
+      align-self: start;
+    }
+    .rp-table td:nth-child(1)::before {
+      content: 'Room';
+    }
+    .rp-table td:nth-child(2)::before {
+      content: 'Breakfast';
+    }
+    .rp-table td:nth-child(3)::before {
+      content: 'Cancellation';
+    }
+    .rp-table td:nth-child(4)::before {
+      content: 'Total Price';
+    }
+    .rp-table td:nth-child(5)::before {
+      content: 'Pax';
+    }
+    .rp-table td:nth-child(6)::before {
+      content: 'Refundable';
+    }
+    .rp-table td:nth-child(7)::before {
+      content: 'Select';
+    }
+
+    /* Make action controls in the "Select" cell fill nicely */
+    .rp-table td:nth-child(7) > * {
+      justify-self: start;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    /* Slight emphasis for price row */
+    .rp-table td:nth-child(4) {
+      background: ${({ theme }) => theme.colors.cardColor};
+    }
+
+    /* Phone tweaks */
+    @media (max-width: 560px) {
+      .rp-table td {
+        grid-template-columns: 8.5rem 1fr;
+        padding: 8px 10px;
+      }
+    }
+  }
+`;
+
 const Row1 = styled.div`
   // display: grid;
   display: flex;
