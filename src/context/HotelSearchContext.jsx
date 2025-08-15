@@ -1,6 +1,5 @@
-import { useEffect } from "react";
-import { useState } from "react";
-import { createContext, useContext } from "react";
+import { useState } from 'react';
+import { createContext, useContext } from 'react';
 
 const HotelSearchContext = createContext();
 

@@ -197,9 +197,12 @@ export default RightColumnSection;
 // Styled Components
 const RightColumn = styled.div`
   position: sticky;
-  top: 0;
+  top: 65px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(8px);
+
   left: 0;
-  z-index: 1000;
+  z-index: 990;
   flex: 0 0 20%;
   height: fit-content;
   background: ${({ theme }) => theme.colors.cardColor};

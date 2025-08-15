@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 // import { useThemeContext } from '../../../theme/ThemeProvider';
 import beachImg from '../../../assets/beach1.jpeg';
-import qrCodeImg from '../../../assets/qr_dummy.png'; // Replace with real QR later
+// import qrCodeImg from '../../../assets/qr_dummy.png'; // Replace with real QR later
 import 'animate.css/animate.min.css';
 import { useInView } from 'react-intersection-observer';
 const Container = styled.section`
@@ -154,17 +154,17 @@ export default function AboutSection() {
           {leftIn && (
             <LeftPanel className={`animate__animated animate__backInLeft`}>
               <QRColumn>
-                <QRCode src={qrCodeImg} alt="QR Code" />
+                {/* <QRCode src={qrCodeImg} alt="QR Code" /> */}
               </QRColumn>
 
-              <AppTitle>Go further with the Stayovia app</AppTitle>
+              <AppTitle>Go further with Stayovia Circle</AppTitle>
               <QRInstruction>
-                Scan the QR code with your device camera and download our app
+                Your journey gets better with every stay, ride, and tour
               </QRInstruction>
               <AppDescription>
-                Save on select hotels and earn OneKeyCash on bookings in the
-                app. Our app deals help you to save on trips so you can travel
-                more and manage it all on the go.
+                Earn rewards on hotels, stays, rides & tours with Stayovia
+                Circle. Your travel gets better with each booking—exclusive
+                deals, perks, and future savings await.
               </AppDescription>
             </LeftPanel>
           )}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Slider from 'react-slick';
 import 'animate.css/animate.min.css';
@@ -6,14 +6,22 @@ import { useInView } from 'react-intersection-observer';
 
 // Images
 import Islamabad1Img from '../../../assets/Islamabad1.jpeg';
+import Hunza1Img from '../../../assets/Hunza.jpg';
 import Islamabad2Img from '../../../assets/Islamabad2.jpeg';
 import Islamabad3Img from '../../../assets/Islamabad3.jpeg';
 import Lahore1Img from '../../../assets/Lahore1.jpeg';
 import Lahore2Img from '../../../assets/Lahore2.jpeg';
 import Karachi1Img from '../../../assets/Karachi1.jpeg';
 import Karachi2Img from '../../../assets/Karachi2.jpeg';
-import Lyallpur1Img from '../../../assets/Lyallpur1.jpeg';
+import Faisalabad1Img from '../../../assets/Lyallpur1.jpeg';
 import Multan1Img from '../../../assets/Multan1.jpeg';
+import { format } from 'date-fns';
+import toast from 'react-hot-toast';
+import { hotelSearch } from '../../../api/hotelSearch';
+import { useHotelSearch } from '../../../context/HotelSearchContext';
+import { useNavigate } from 'react-router-dom';
+import { useCallback } from 'react';
+import { memo } from 'react';
 
 const Container = styled.section`
   width: 100%;
@@ -43,8 +51,9 @@ const CardsGrid = styled.div`
   justify-content: center;
 `;
 
-// 1) Update your SlideImage:
-const SlideImage = styled.img`
+const SlideImage = styled.img.attrs({
+  loading: 'lazy',
+})`
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -162,47 +171,59 @@ const LazyWrapper = styled.div`
     aspect-ratio: unset;
   }
 `;
-function LazyDestinationCard({ index, card }) {
-  const { ref, inView } = useInView({
-    triggerOnce: true,
-    threshold: 0.2,
-  });
-
-  // 0–2 slideDown, 3–5 slideUp
+// ————— Memoized Card —————
+const LazyDestinationCard = memo(function LazyDestinationCard({
+  card,
+  onSelect,
+  index,
+}) {
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [loading, setLoading] = useState(false);
+  // pick slide-in animation based on position
   const animationClass =
-    index <= 2 ? 'animate__slideInUp' : 'animate__slideInUp';
+    index < 3 // cards 0,1,2
+      ? 'animate__slideInDown'
+      : 'animate__slideInUp';
+  const handleClick = () => {
+    if (loading) return;
+    setLoading(true);
+    Promise.resolve(onSelect(card))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  };
 
   return (
     <LazyWrapper ref={ref}>
       {inView && (
+        // <Card disabled={loading} onClick={handleClick}>
         <Card
           className={`animate__animated ${animationClass}`}
-          onClick={() => console.log(`Details: ${card.title}`)}
+          disabled={loading}
+          onClick={handleClick}
         >
           <CardRightSlider
-            {...{
-              dots: false,
-              arrows: false,
-              autoplay: card.images.length > 1,
-              infinite: card.images.length > 1,
-              speed: 500,
-              autoplaySpeed: 2500,
-              slidesToShow: 1,
-              slidesToScroll: 1,
-            }}
+            dots={false}
+            arrows={false}
+            autoplay={card.images.length > 1}
+            infinite={card.images.length > 1}
+            speed={500}
+            autoplaySpeed={2500}
+            slidesToShow={1}
+            slidesToScroll={1}
           >
-            {card.images.map((imgSrc, idx) => (
+            {card.images.map((img, idx) => (
               <SlideWrapper key={idx}>
-                <SlideImage src={imgSrc} alt={`${card.title} ${idx + 1}`} />
+                <SlideImage src={img} alt={`${card.title} ${idx + 1}`} />
               </SlideWrapper>
             ))}
           </CardRightSlider>
           <CardTitle>
             {card.title}
             <CircularButton
+              disabled={loading}
               onClick={(e) => {
                 e.stopPropagation();
-                console.log(`Go to: ${card.title}`);
+                handleClick();
               }}
             >
               &gt;
@@ -212,35 +233,84 @@ function LazyDestinationCard({ index, card }) {
       )}
     </LazyWrapper>
   );
-}
+});
 
 export default function TopDestinationSection() {
+  const { setFilteringData, setHotelSearchData } = useHotelSearch();
+  const navigate = useNavigate();
+  const formatInput = useCallback((d) => format(d, 'yyyy-MM-dd'), []);
+
+  const handleSelect = useCallback(
+    async (card) => {
+      const payload = {
+        AddressId: card.code,
+        CityName: card.title,
+        CheckIn: formatInput(new Date()),
+        CheckOut: formatInput(new Date(Date.now() + 24 * 60 * 60 * 1000)),
+        nights: 1,
+        Rooms: 1,
+        GuestQuantity: [{ label: 'Room 1', Adults: 1, Children: 0 }],
+        Cancellation: false,
+        Rating: [],
+      };
+
+      setFilteringData(payload);
+      const toastId = toast.loading('Searching…', {
+        style: { fontSize: '1.25rem', padding: '16px 24px' },
+      });
+
+      try {
+        const response = await hotelSearch(payload);
+        setHotelSearchData(response.data);
+        toast.dismiss(toastId);
+
+        if (response.status) {
+          navigate('/search-results', { state: { cameFromSearch: true } });
+        } else {
+          toast.error('Failed to load hotels', {
+            style: { fontSize: '1.25rem', padding: '16px 24px' },
+          });
+        }
+      } catch (err) {
+        console.error('Search API failed:', err);
+        toast.dismiss(toastId);
+      }
+    },
+    [formatInput, navigate, setFilteringData, setHotelSearchData]
+  );
+
   const cards = [
     {
       title: 'Islamabad',
       images: [Islamabad1Img],
+      code: 4277,
       // , Islamabad2Img, Islamabad3Img],
     },
     {
       title: 'Karachi',
       images: [Karachi1Img],
+      code: 4269,
       // , Karachi2Img],
     },
     {
       title: 'Lahore',
       images: [Lahore2Img],
+      code: 4270,
     },
     {
       title: 'Faisalabad',
-      images: [Lyallpur1Img],
+      images: [Faisalabad1Img],
+      code: 4271,
     },
     {
       title: 'Multan',
       images: [Multan1Img],
+      code: 4273,
     },
     {
-      title: 'Faisalabad',
-      images: [Lyallpur1Img],
+      title: 'Hunza',
+      images: [Hunza1Img],
+      code: 8500,
     },
   ];
 
@@ -248,51 +318,13 @@ export default function TopDestinationSection() {
     <Container>
       <Heading>Top Destinations</Heading>
       <CardsGrid>
-        {/* {cards.map((card, index) => {
-          const isSingle = card.images.length === 1;
-
-          const sliderSettings = {
-            dots: false,
-            arrows: false,
-            autoplay: !isSingle,
-            infinite: !isSingle,
-            speed: 500,
-            autoplaySpeed: 2500,
-            slidesToShow: 1,
-            slidesToScroll: 1,
-          };
-
-          return (
-            <Card
-              key={index}
-              className={`animate__animated index 0 to 2 animate__slideInDown, index 3-5 animate__slideInUp`}
-              onClick={() => console.log(`Details: ${card.title}`)}
-            >
-              <CardRightSlider {...sliderSettings}>
-                {card.images.map((imgSrc, idx) => (
-                  <SlideWrapper key={idx}>
-                    <SlideImage src={imgSrc} alt={`${card.title} ${idx + 1}`} />
-                  </SlideWrapper>
-                ))}
-              </CardRightSlider>
-
-              <CardTitle>
-                {card.title}
-                <CircularButton
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    console.log(`Go to: ${card.title}`);
-                  }}
-                >
-                  {'>'}
-                </CircularButton>
-              </CardTitle>
-            </Card>
-          );
-        })} */}
-
         {cards.map((card, index) => (
-          <LazyDestinationCard key={index} index={index} card={card} />
+          <LazyDestinationCard
+            key={card.code}
+            card={card}
+            onSelect={handleSelect}
+            index={index}
+          />
         ))}
       </CardsGrid>
     </Container>

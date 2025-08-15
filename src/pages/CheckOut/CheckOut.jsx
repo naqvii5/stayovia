@@ -173,8 +173,10 @@ export default function CheckOut() {
   };
   return (
     <>
-      <Container_NoGradient>
+      <Container>
         <Header />
+      </Container>
+      <Container_NoGradient>
         <TopBar>
           <Breadcrumb>
             <Link to="/">Main Page</Link> &gt;
@@ -205,6 +207,25 @@ export default function CheckOut() {
 }
 
 // ————— Styled Components —————
+const Container = styled.section`
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px 100px 0 100px;
+  background: ${({ theme }) => theme.colors.primary};
+  // background: linear-gradient(
+  //   to top,
+  //   ${({ theme }) => theme.colors.primary} 0%,
+  //   ${({ theme }) => theme.colors.secondary} 100%
+  // );
+  color: ${({ theme }) => theme.colors.primaryText};
+  box-sizing: border-box;
+  overflow: hidden;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    padding: 10px 10px 0 10px;
+  }
+`;
 const TopBar = styled.div`
   width: max-content;
   background: ${({ theme }) => theme.colors.primary};

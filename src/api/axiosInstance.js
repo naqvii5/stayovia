@@ -3,7 +3,7 @@ import axios from 'axios';
 import { getAuthToken } from '../utils/authCookies';
 const source = localStorage.getItem('source');
 // var baseURL = 'http://192.168.0.148:8000/api/b2b/';
-var baseURL = 'https://staging.bedandbeds.com/api/b2b/';
+var baseURL = 'https://stagingbackend.stayovia.com/api/b2b/';
 
 export const axiosInstance = axios.create({
   baseURL: baseURL,

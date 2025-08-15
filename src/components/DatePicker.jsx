@@ -1,10 +1,10 @@
 // src/components/Datepicker.jsx
-import React, { useEffect, useState, useRef } from "react";
-import { DateRange } from "react-date-range";
-import format from "date-fns/format";
-import "react-date-range/dist/styles.css";
-import "react-date-range/dist/theme/default.css";
-import styled from "styled-components";
+import React, { useEffect, useState, useRef } from 'react';
+import { DateRange } from 'react-date-range';
+import format from 'date-fns/format';
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
+import styled from 'styled-components';
 
 // Styled‐components (converted from your old Datepicker.css)
 
@@ -93,17 +93,17 @@ const StyledDateRange = styled(DateRange)`
 // Datepicker component
 
 export default function Datepicker({ isModal = false, onDatesChange = null }) {
-  const formatInput = (d) => format(d, "MMM dd, yyyy");
+  const formatInput = (d) => format(d, 'MMM dd, yyyy');
 
   const [dateRange, setDateRange] = useState([
     {
       startDate: new Date(),
       endDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      key: "selection",
+      key: 'selection',
     },
   ]);
   const [open, setOpen] = useState(false);
-  const [selectionStep, setSelectionStep] = useState("start"); // 'start' or 'end'
+  const [selectionStep, setSelectionStep] = useState('start'); // 'start' or 'end'
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const calendarRef = useRef(null);
   const wrapperRef = useRef(null);
@@ -111,15 +111,15 @@ export default function Datepicker({ isModal = false, onDatesChange = null }) {
   // Update mobile flag on resize
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
   useEffect(() => {
     // Default dates setting  checkin today , checkout next day
     if (onDatesChange && dateRange) {
-      const checkInDate = format(dateRange[0].startDate, "yyyy-MM-dd");
-      const checkOutDate = format(dateRange[0].endDate, "yyyy-MM-dd");
+      const checkInDate = format(dateRange[0].startDate, 'yyyy-MM-dd');
+      const checkOutDate = format(dateRange[0].endDate, 'yyyy-MM-dd');
       const totalNights =
         (dateRange[0].endDate - dateRange[0].startDate) / (1000 * 60 * 60 * 24);
 
@@ -130,6 +130,7 @@ export default function Datepicker({ isModal = false, onDatesChange = null }) {
         nights: totalNights,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateRange]);
 
   // Close the calendar when clicking outside
@@ -140,22 +141,22 @@ export default function Datepicker({ isModal = false, onDatesChange = null }) {
       if (calendarRef.current?.contains(e.target)) return;
       setOpen(false);
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, [isModal]);
 
   // Handle date selection
   const handleChange = (ranges) => {
     setDateRange([ranges.selection]);
-    if (selectionStep === "start") {
-      setSelectionStep("end");
+    if (selectionStep === 'start') {
+      setSelectionStep('end');
     } else {
-      setSelectionStep("start");
+      setSelectionStep('start');
       setOpen(false);
       if (onDatesChange) {
         onDatesChange({
-          checkIn: format(ranges.selection.startDate, "yyyy-MM-dd"),
-          checkOut: format(ranges.selection.endDate, "yyyy-MM-dd"),
+          checkIn: format(ranges.selection.startDate, 'yyyy-MM-dd'),
+          checkOut: format(ranges.selection.endDate, 'yyyy-MM-dd'),
           nights:
             (ranges.selection.endDate - ranges.selection.startDate) /
             (1000 * 60 * 60 * 24),

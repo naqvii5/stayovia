@@ -2,12 +2,16 @@
 import styled from 'styled-components';
 import logoSrc from '../assets/StayoViaLogo.png';
 import SwitchThemeBtn from './SwitchThemeBtn';
-import { Link, useNavigate } from 'react-router-dom';
-import { clearAuthToken } from '../utils/authCookies';
-import { useAuthContext } from '../context/AuthContext';
-import toast from 'react-hot-toast';
-import { adminLogin } from '../api/adminLogin';
-import { logout } from '../api/logout';
+import {
+  Link,
+  useNavigate,
+  // useNavigate
+} from 'react-router-dom';
+// import { clearAuthToken } from '../utils/authCookies';
+// import { useAuthContext } from '../context/AuthContext';
+// import toast from 'react-hot-toast';
+// import { adminLogin } from '../api/adminLogin';
+// import { logout } from '../api/logout';
 // import SwitchThemeBtn from "../../../components/SwitchThemeBtn";
 
 const Container = styled.section`
@@ -31,20 +35,20 @@ const Container = styled.section`
 `;
 
 const HeaderRow = styled.div`
-  position: relative; /* So logo can be absolutely positioned inside */
+  position: relative;
   display: flex;
-  flex-direction: row-reverse;
-  justify-content: space-between;
+  justify-content: space-between; /* space between logo and nav */
   align-items: center;
-  height: 10px; /* Keep your header small and fixed */
-  margin-bottom: 3rem;
-  overflow: visible;
+  height: 60px; /* smaller overall height */
+  margin-bottom: 1.5rem; /* reduce spacing below */
+  padding: 0 1rem; /* small horizontal padding */
 `;
 
 const NavActions = styled.nav`
   display: flex;
   align-items: center;
   gap: 1rem;
+  margin-left: auto; /* Keeps nav items to the right */
 `;
 
 const StyledLink = styled(Link)`
@@ -60,21 +64,15 @@ const StyledLink = styled(Link)`
     opacity: 0.9;
   }
 `;
+
 const Logo = styled.img`
-  // height: 140px; /* Large logo */
-  max-height: 140px;
-  max-width: 140px;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%); /* Vertically center within the small header */
-  z-index: 1;
-  pointer-events: auto;
+  max-height: 40px; /* small logo */
+  max-width: 120px;
   cursor: pointer;
 `;
 
 export default function Header() {
-  const { token, setToken } = useAuthContext();
+  // const { token, setToken } = useAuthContext();
   const navigate = useNavigate();
 
   // ——— onSubmit handler (using the commented logic from handleLogin) ———
@@ -110,48 +108,33 @@ export default function Header() {
   //   }
   // };
 
-  const logOutFunc = async () => {
-    try {
-      const data = await logout();
-      if (data.status) {
-        toast.success('Logged out successfully!', {
-          style: { fontSize: '1.25rem', padding: '16px 24px' },
-        });
-        clearAuthToken(), setToken();
-      } else {
-        toast.error('Failed to logout!', {
-          style: { fontSize: '1.25rem', padding: '16px 24px' },
-        });
-      }
-    } catch (err) {
-      // toast.dismiss(toastId);
-      toast.error('Error!', {
-        style: { fontSize: '1.25rem', padding: '16px 24px' },
-      });
-      console.error('Login error:', err);
-    }
-  };
+  // const logOutFunc = async () => {
+  //   try {
+  //     const data = await logout();
+  //     if (data.status) {
+  //       toast.success('Logged out successfully!', {
+  //         style: { fontSize: '1.25rem', padding: '16px 24px' },
+  //       });
+  //       clearAuthToken(), setToken();
+  //     } else {
+  //       toast.error('Failed to logout!', {
+  //         style: { fontSize: '1.25rem', padding: '16px 24px' },
+  //       });
+  //     }
+  //   } catch (err) {
+  //     // toast.dismiss(toastId);
+  //     toast.error('Error!', {
+  //       style: { fontSize: '1.25rem', padding: '16px 24px' },
+  //     });
+  //     console.error('Login error:', err);
+  //   }
+  // };
   return (
     // <Container>
     <HeaderRow>
-      {/* <Logo src={logoSrc} alt="Logo" onClick={() => navigate("/")} /> */}
-      {/* <Logo src={logoSrc} alt="Logo" onClick={() => window.open(`https://bedandbeds.com/`, "_blank")} /> */}
-      <Logo src={logoSrc} alt="Logo" />
+      <Logo src={logoSrc} onClick={() => navigate('/')} alt="Logo" />
       <NavActions>
-        {/* <Link to="/booking_details">
-            <h3>
-              Modify/Cancel Booking
-            </h3>
-          </Link> */}
-        <StyledLink to="#">Modify/Cancel Booking</StyledLink>
-        {
-          // token && (
-          //   <>
-          //     <StyledLink onClick={logOutFunc}>Log out</StyledLink>
-          //   </>
-          // )
-        }
-        {/* <SwitchThemeBtn /> */}
+        <StyledLink to="view-bookings">Modify/Cancel Booking</StyledLink>
       </NavActions>
     </HeaderRow>
 

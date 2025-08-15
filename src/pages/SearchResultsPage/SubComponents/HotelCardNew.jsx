@@ -30,6 +30,246 @@ const typeOptions = [
   { id: 15, label: 'Self-Catering' },
   { id: 16, label: 'Vacation Rental' },
 ];
+const PrevArrow = ({ onClick }) => (
+  <ArrowButton style={{ left: 10 }} onClick={onClick}>
+    &#x276E;
+  </ArrowButton>
+);
+const NextArrow = ({ onClick }) => (
+  <ArrowButton style={{ right: 10 }} onClick={onClick}>
+    &#x276F;
+  </ArrowButton>
+);
+function MyBadge() {
+  const randomCountRef = useRef(Math.floor(Math.random() * 6) + 1);
+  return <div>Only {randomCountRef.current} left</div>;
+}
+export default function HotelCardNew({ hotelSearchData }) {
+  const { filteringData, setSpecificHotelSearchData } = useHotelSearch();
+  const baseImageURL = 'https://connect.purpletech.ai/storage/';
+  // const baseImageURL = 'http://192.168.0.148:8002/storage/';
+  // console.log('hotelSearchData :>> ', hotelSearchData);
+  const searchSpecificHotel = (id) => {
+    if (
+      !filteringData?.CheckIn ||
+      !filteringData?.CheckOut ||
+      !filteringData?.Rooms ||
+      !filteringData?.GuestQuantity ||
+      !id
+    ) {
+      toast.error('Data is missing!', {
+        style: { fontSize: '1.25rem', padding: '16px 24px' },
+      });
+      return;
+    }
+    const totalGuests = filteringData.GuestQuantity?.reduce(
+      (sum, room) => sum + (room?.Adults || 0) + (room?.Children || 0),
+      0
+    );
+    const payload = {
+      CheckIn: filteringData.CheckIn,
+      CheckOut: filteringData.CheckOut,
+      totalGuests,
+      Rooms: filteringData.Rooms,
+      GuestQuantity: filteringData.GuestQuantity,
+      Cancellation: filteringData.Cancellation,
+      AccommodationId: id,
+    };
+    localStorage.setItem('payload', JSON.stringify(payload));
+    const toastId = toast.loading('Searching…', {
+      style: { fontSize: '1.25rem', padding: '16px 24px' },
+    });
+    specificHotelSearch(payload)
+      .then((response) => {
+        setSpecificHotelSearchData(response?.data);
+        localStorage.setItem(
+          'specificHotelSearchData',
+          JSON.stringify(response?.data)
+        );
+        toast.dismiss(toastId);
+        if (response?.status) {
+          toast.success('Data searched!', {
+            style: { fontSize: '1.25rem', padding: '16px 24px' },
+          });
+          window.open(`/#/hotel-details`, '_blank');
+        } else {
+          toast.error('Failed to load hotels', {
+            style: { fontSize: '1.25rem', padding: '16px 24px' },
+          });
+        }
+      })
+      .catch((err) => {
+        console.error('Search API failed:', err);
+        toast.dismiss(toastId);
+        toast.error('Error', {
+          style: { fontSize: '1.25rem', padding: '16px 24px' },
+        });
+      });
+  };
+
+  return (
+    <>
+      {hotelSearchData?.length > 0 ? (
+        hotelSearchData
+          .filter((hotel) => hotel?.rooms?.rateplans?.[0]?.TotalPrice > 0)
+          .map((hotel) => {
+            const facilityNames = new Set(
+              hotel.accommodationFacilities?.map((f) => f.FacilityName) || []
+            );
+            const settings = {
+              dots: false,
+              infinite: hotel?.images?.length > 1,
+              speed: 500,
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              arrows: hotel?.images?.length > 1,
+              prevArrow: <PrevArrow />,
+              nextArrow: <NextArrow />,
+            };
+            const typeLabel =
+              typeOptions.find((opt) => opt.id === hotel?.accommodationType)
+                ?.label || 'Unknown';
+            return (
+              <HotelCardContainer key={hotel?.accommodationId}>
+                <ImageColumn>
+                  <Slider
+                    {...settings}
+                    // style={{
+                    // maxHeight: '300px',
+                    // maxWidth: '320px',
+                    // }}
+                  >
+                    {hotel?.images?.map((src, idx) => (
+                      // <div key={idx} style={{ height: '100%' }}>
+                      <div>
+                        {/* key={idx} style={{ height: '100%' }}> */}
+                        <img
+                          // style={{ maxWidth: '380px', maxHeight: '300px' }}
+                          src={baseImageURL + src?.ImageURL}
+                          alt={`${hotel?.accommodationName} ${idx + 1}`}
+                        />
+                      </div>
+                    ))}
+                  </Slider>
+                </ImageColumn>
+                <DetailsColumn>
+                  <div>
+                    <div>
+                      <Title>{hotel?.accommodationName}</Title>
+                      <Stars>
+                        {'★'.repeat(Math.floor(hotel?.rating || 0))}
+                        <SubText>{typeLabel}</SubText>
+                      </Stars>
+                      {/* <SubText>{hotel?.details}</SubText> */}
+                    </div>
+                    {/* <RibbonBadge>{hotel?.rating}</RibbonBadge> */}
+                    <div>
+                      <SubText>{hotel?.address}</SubText>
+                    </div>
+                  </div>
+
+                  {/* === NEW FACILITIES SECTION === */}
+                  <div>
+                    <SubText as="div" style={{ fontWeight: '300' }}>
+                      Facilities Provided
+                    </SubText>
+                    <FacilitiesContainer>
+                      {(facilityNames.has('WiFi') ||
+                        facilityNames.has('Internet')) && (
+                        <FacilityBox>
+                          <FaWifi /> WiFi
+                        </FacilityBox>
+                      )}
+                      {facilityNames.has('Parking') && (
+                        <FacilityBox>
+                          <FaParking /> Parking
+                        </FacilityBox>
+                      )}
+                      {facilityNames.has('Room Service') && (
+                        <FacilityBox>
+                          <FaConciergeBell /> Room Service
+                        </FacilityBox>
+                      )}
+                      {facilityNames.has('Security CCTV') && (
+                        <FacilityBox>
+                          <FaVideo /> Security
+                        </FacilityBox>
+                      )}
+                    </FacilitiesContainer>
+                  </div>
+                </DetailsColumn>
+                <RateplanColumn>
+                  <UrgencyBadge>
+                    ONLY {Math.floor(Math.random() * 3) + 1} LEFT
+                  </UrgencyBadge>
+                  <RateplanColumnDataDiv>
+                    {/* <Title as="div">{hotel?.rooms?.RoomTypeName}</Title> */}
+
+                    {/* <div> */}
+
+                    <TitleTax>
+                      {hotel?.rooms?.rateplans?.[0]?.BreakfastIncluded
+                        ? 'Breakfast included'
+                        : 'Breakfast not included'}
+                    </TitleTax>
+                    <TitleTax>
+                      {hotel?.rooms?.rateplans?.[0]?.NonRefundableRate
+                        ? 'Not Refundable'
+                        : 'Refundable'}
+                    </TitleTax>
+                    <TitleTax
+                    // as="div"
+                    // style={{
+                    // display: 'flex',
+                    // alignSelf: 'flex-end',
+                    // }} /* ← only this child moves right */
+                    >
+                      PKR.
+                      {hotel?.rooms?.rateplans?.[0]?.totalPriceExcludeTax ||
+                        '0'}
+                      + PKR. {hotel?.rooms?.rateplans?.[0]?.TotalTax || '0'} Tax{' '}
+                    </TitleTax>
+                    <SubTextCancellationPolicy>
+                      {hotel?.rooms?.rateplans?.[0]?.CancellationPolicy
+                        ? '+ Free Cancellation'
+                        : ''}
+                    </SubTextCancellationPolicy>
+                    <TitleAmount>
+                      PKR.{' '}
+                      {hotel?.rooms?.rateplans?.[0]?.TotalPrice.toLocaleString() ||
+                        '0'}
+                    </TitleAmount>
+
+                    {/* </div> */}
+                  </RateplanColumnDataDiv>
+                  <MyButton
+                    color="#fff"
+                    textColor="#fff"
+                    border="none"
+                    padding="0.60rem 1.35rem"
+                    width="100%"
+                    height="100%"
+                    borderRadius="0.8rem"
+                    bgColor={({ theme }) => theme.colors.primary}
+                    fontSize={({ theme }) => theme.fontSizes.xxsmall}
+                    onClick={() => searchSpecificHotel(hotel?.accommodationId)}
+                  >
+                    Show All
+                  </MyButton>
+                </RateplanColumn>
+              </HotelCardContainer>
+            );
+          })
+      ) : (
+        <HotelCardContainer>
+          <DetailsColumn>
+            <Title>No Hotel Available!</Title>
+          </DetailsColumn>
+        </HotelCardContainer>
+      )}
+    </>
+  );
+}
 
 // Container with three columns
 const HotelCardContainer = styled.div`
@@ -74,7 +314,8 @@ const DetailsColumn = styled.div`
   // border-right: 1px solid ${({ theme }) => theme.colors.primary};
   border-right: 1px solid #d3d3d3;
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    flex-direction: row;
+    gap: 2rem;
+    // flex-direction: row;
   }
 `;
 
@@ -84,20 +325,33 @@ const RateplanColumn = styled.div`
   display: flex;
   margin: 0 0 0 10px;
   flex-direction: column;
-  align-items: flex-end;
   justify-content: space-between;
   padding: 1rem 1rem;
   gap: 0.5rem;
+  @media (min-width: ${({ theme }) => theme.breakpoints.tablet + 1}) {
+    align-items: flex-end;
+  }
+`;
+const UrgencyBadge = styled.div`
+  background-color: red;
+  padding: 5px 16px;
+  border-radius: 0.1rem;
+  margin: 0;
+  color: #fff;
+  text-wrap: nowrap;
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    width: 110px;
+  }
 `;
 // Column 3: Rateplan details (30%)
 const RateplanColumnDataDiv = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  // align-items: flex-end;
   // justify-content: space-between;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    flex-direction: row;
+    // flex-direction: row;
     justify-content: space-evenly;
   }
 `;
@@ -188,249 +442,3 @@ const FacilityBox = styled.div`
   color: ${({ theme }) => theme.colors.primary};
   font-size: ${({ theme }) => theme.fontSizes.xxsmall};
 `;
-
-const PrevArrow = ({ onClick }) => (
-  <ArrowButton style={{ left: 10 }} onClick={onClick}>
-    &#x276E;
-  </ArrowButton>
-);
-const NextArrow = ({ onClick }) => (
-  <ArrowButton style={{ right: 10 }} onClick={onClick}>
-    &#x276F;
-  </ArrowButton>
-);
-function MyBadge() {
-  const randomCountRef = useRef(Math.floor(Math.random() * 6) + 1);
-  return <div>Only {randomCountRef.current} left</div>;
-}
-export default function HotelCardNew({ hotelSearchData }) {
-  const { filteringData, setSpecificHotelSearchData } = useHotelSearch();
-  const baseImageURL = 'https://connect.purpletech.ai/storage/';
-  // const baseImageURL = 'http://192.168.0.148:8002/storage/';
-  console.log('hotelSearchData :>> ', hotelSearchData);
-  const searchSpecificHotel = (id) => {
-    if (
-      !filteringData?.CheckIn ||
-      !filteringData?.CheckOut ||
-      !filteringData?.Rooms ||
-      !filteringData?.GuestQuantity ||
-      !id
-    ) {
-      toast.error('Data is missing!', {
-        style: { fontSize: '1.25rem', padding: '16px 24px' },
-      });
-      return;
-    }
-    const totalGuests = filteringData.GuestQuantity?.reduce(
-      (sum, room) => sum + (room?.Adults || 0) + (room?.Children || 0),
-      0
-    );
-    const payload = {
-      CheckIn: filteringData.CheckIn,
-      CheckOut: filteringData.CheckOut,
-      totalGuests,
-      Rooms: filteringData.Rooms,
-      GuestQuantity: filteringData.GuestQuantity,
-      Cancellation: filteringData.Cancellation,
-      AccommodationId: id,
-    };
-    localStorage.setItem('payload', JSON.stringify(payload));
-    const toastId = toast.loading('Searching…', {
-      style: { fontSize: '1.25rem', padding: '16px 24px' },
-    });
-    specificHotelSearch(payload)
-      .then((response) => {
-        setSpecificHotelSearchData(response?.data);
-        localStorage.setItem(
-          'specificHotelSearchData',
-          JSON.stringify(response?.data)
-        );
-        toast.dismiss(toastId);
-        if (response?.status) {
-          toast.success('Data searched!', {
-            style: { fontSize: '1.25rem', padding: '16px 24px' },
-          });
-          window.open(`/#/hotel-details`, '_blank');
-        } else {
-          toast.error('Failed to load hotels', {
-            style: { fontSize: '1.25rem', padding: '16px 24px' },
-          });
-        }
-      })
-      .catch((err) => {
-        console.error('Search API failed:', err);
-        toast.dismiss(toastId);
-        toast.error('Error', {
-          style: { fontSize: '1.25rem', padding: '16px 24px' },
-        });
-      });
-  };
-
-  return (
-    <>
-      {hotelSearchData?.length > 0 ? (
-        hotelSearchData.map((hotel) => {
-          const facilityNames = new Set(
-            hotel.accommodationFacilities?.map((f) => f.FacilityName) || []
-          );
-          const settings = {
-            dots: false,
-            infinite: hotel?.images?.length > 1,
-            speed: 500,
-            slidesToShow: 1,
-            slidesToScroll: 1,
-            arrows: hotel?.images?.length > 1,
-            prevArrow: <PrevArrow />,
-            nextArrow: <NextArrow />,
-          };
-          const typeLabel =
-            typeOptions.find((opt) => opt.id === hotel?.accommodationType)
-              ?.label || 'Unknown';
-          return (
-            <HotelCardContainer key={hotel?.accommodationId}>
-              <ImageColumn>
-                <Slider
-                  {...settings}
-                  // style={{
-                  // maxHeight: '300px',
-                  // maxWidth: '320px',
-                  // }}
-                >
-                  {hotel?.images?.map((src, idx) => (
-                    // <div key={idx} style={{ height: '100%' }}>
-                    <div>
-                      {/* key={idx} style={{ height: '100%' }}> */}
-                      <img
-                        // style={{ maxWidth: '380px', maxHeight: '300px' }}
-                        src={baseImageURL + src?.ImageURL}
-                        alt={`${hotel?.accommodationName} ${idx + 1}`}
-                      />
-                    </div>
-                  ))}
-                </Slider>
-              </ImageColumn>
-              <DetailsColumn>
-                <div>
-                  <div>
-                    <Title>{hotel?.accommodationName}</Title>
-                    <Stars>
-                      {'★'.repeat(Math.floor(hotel?.rating || 0))}
-                      <SubText>{typeLabel}</SubText>
-                    </Stars>
-                    {/* <SubText>{hotel?.details}</SubText> */}
-                  </div>
-                  {/* <RibbonBadge>{hotel?.rating}</RibbonBadge> */}
-                  <div>
-                    <SubText>{hotel?.address}</SubText>
-                  </div>
-                </div>
-
-                {/* === NEW FACILITIES SECTION === */}
-                <div>
-                  <SubText as="div" style={{ fontWeight: '300' }}>
-                    Facilities Provided
-                  </SubText>
-                  <FacilitiesContainer>
-                    {(facilityNames.has('WiFi') ||
-                      facilityNames.has('Internet')) && (
-                      <FacilityBox>
-                        <FaWifi /> WiFi
-                      </FacilityBox>
-                    )}
-                    {facilityNames.has('Parking') && (
-                      <FacilityBox>
-                        <FaParking /> Parking
-                      </FacilityBox>
-                    )}
-                    {facilityNames.has('Room Service') && (
-                      <FacilityBox>
-                        <FaConciergeBell /> Room Service
-                      </FacilityBox>
-                    )}
-                    {facilityNames.has('Security CCTV') && (
-                      <FacilityBox>
-                        <FaVideo /> Security
-                      </FacilityBox>
-                    )}
-                  </FacilitiesContainer>
-                </div>
-              </DetailsColumn>
-              <RateplanColumn>
-                <div
-                  style={{
-                    background: 'red',
-                    padding: '5px 16px',
-                    borderRadius: '0.1rem',
-                    margin: 0,
-                    color: '#fff',
-                    textWrap: 'nowrap',
-                  }}
-                >
-                  ONLY {Math.floor(Math.random() * 3) + 1} LEFT
-                </div>
-                <RateplanColumnDataDiv>
-                  {/* <Title as="div">{hotel?.rooms?.RoomTypeName}</Title> */}
-
-                  {/* <div> */}
-
-                  <TitleTax>
-                    {hotel?.rooms?.rateplans?.[0]?.BreakfastIncluded
-                      ? 'Breakfast included'
-                      : 'Breakfast not included'}
-                  </TitleTax>
-                  <TitleTax>
-                    {hotel?.rooms?.rateplans?.[0]?.NonRefundableRate
-                      ? 'Not Refundable'
-                      : 'Refundable'}
-                  </TitleTax>
-                  <TitleTax
-                  // as="div"
-                  // style={{
-                  // display: 'flex',
-                  // alignSelf: 'flex-end',
-                  // }} /* ← only this child moves right */
-                  >
-                    PKR.
-                    {hotel?.rooms?.rateplans?.[0]?.totalPriceExcludeTax || '0'}+
-                    PKR. {hotel?.rooms?.rateplans?.[0]?.TotalTax || '0'} Tax{' '}
-                  </TitleTax>
-                  <TitleAmount>
-                    PKR.{' '}
-                    {hotel?.rooms?.rateplans?.[0]?.TotalPrice.toLocaleString() ||
-                      '0'}
-                  </TitleAmount>
-                  <SubTextCancellationPolicy>
-                    {hotel?.rooms?.rateplans?.[0]?.CancellationPolicy
-                      ? '+ Free Cancellation'
-                      : ''}
-                  </SubTextCancellationPolicy>
-                  {/* </div> */}
-                </RateplanColumnDataDiv>
-                <MyButton
-                  color="#fff"
-                  textColor="#fff"
-                  border="none"
-                  padding="0.60rem 1.35rem"
-                  width="100%"
-                  height="100%"
-                  borderRadius="0.8rem"
-                  bgColor={({ theme }) => theme.colors.primary}
-                  fontSize={({ theme }) => theme.fontSizes.xxsmall}
-                  onClick={() => searchSpecificHotel(hotel?.accommodationId)}
-                >
-                  Show All
-                </MyButton>
-              </RateplanColumn>
-            </HotelCardContainer>
-          );
-        })
-      ) : (
-        <HotelCardContainer>
-          <DetailsColumn>
-            <Title>No Hotel Available!</Title>
-          </DetailsColumn>
-        </HotelCardContainer>
-      )}
-    </>
-  );
-}

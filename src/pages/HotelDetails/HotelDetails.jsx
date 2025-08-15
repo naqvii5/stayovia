@@ -80,6 +80,7 @@ import toast from 'react-hot-toast';
 import { hotelSearch } from '../../api/hotelSearch';
 import Spinner from '../../components/Spinner';
 import { specificHotelSearch } from '../../api/specificHotelSearch';
+import { FilterSearchCardForSearchPage } from '../../components/FilterSearchCardForSearchPage';
 
 export default function HotelDetails() {
   const { id } = useParams();
@@ -115,23 +116,24 @@ export default function HotelDetails() {
   // const TOTAL_AVAILABLE = 10;
   // const [imageIndex, setImageIndex] = useState(0);
   const raw = localStorage.getItem('payload');
-  const payloadN = JSON.parse(raw);
-  const [cart, setCart] = useState([]);
+  const payload = JSON.parse(raw);
   const [rating, setRating] = useState([]);
   const [freeCancellation, setFreeCancellation] = useState(false);
   // 1) Lifted state for every filter
-  const [destination, setDestination] = useState(payloadN.AccommodationId);
+  const [destination, setDestination] = useState(payload.AccommodationId);
   const [cityName, setCityName] = useState('');
   const [dates, setDates] = useState({
-    checkIn: payloadN.CheckIn,
-    checkOut: payloadN.CheckOut,
+    checkIn: payload.CheckIn,
+    checkOut: payload.CheckOut,
     nights: null,
   });
-  const [roomsInfo, setRoomsInfo] = useState(payloadN.GuestQuantity);
+  const [roomsInfo, setRoomsInfo] = useState(payload.GuestQuantity);
+
   // const [roomsInfo, setRoomsInfo] = useState([
   //   { label: 'Room 1', Adults: 1, Children: 0 },
   // ]);
   const [isSearching, setIsSearching] = useState(false);
+  const [cart, setCart] = useState([]);
 
   const [cartDetails, setCartDetails] = useState({
     isRefundable: null,
@@ -159,31 +161,19 @@ export default function HotelDetails() {
   }, [specificHotelData]);
 
   // const theme = useTheme();
-  const handleSearch = () => {
-    setIsSearching(true);
-    const raw = localStorage.getItem('payload');
-    const payloadN = JSON.parse(raw);
-    // console.log('localStorage.getItem(payload) :>> ', payloadN);
-    // 1) validate
-    if (
-      !destination ||
-      !dates.checkIn ||
-      !dates.checkOut ||
-      !roomsInfo ||
-      !rating
-    ) {
-      toast.error('Filter data is missing!', {
-        style: { fontSize: '1.25rem', padding: '16px 24px' },
-      });
-      setIsSearching(false);
+  const searchSpecificHotel = () => {
+    if (isSearching) return; // prevent double click
 
-      return;
-    }
-    const totalGuests = roomsInfo?.reduce(
-      (sum, room) => sum + (room?.Adults || 0) + (room?.Children || 0),
+    setIsSearching(true);
+    const toastId = toast.loading('Searching data...', {
+      style: { fontSize: '1.25rem', padding: '16px 24px' },
+    });
+
+    const totalGuests = roomsInfo.reduce(
+      (sum, room) => sum + room.Adults + room.Children,
       0
     );
-    // 2) build payload & save filters in context
+
     const payload = {
       CheckIn: dates.checkIn,
       CheckOut: dates.checkOut,
@@ -191,54 +181,26 @@ export default function HotelDetails() {
       Rooms: roomsInfo.length,
       GuestQuantity: roomsInfo,
       Cancellation: freeCancellation,
-      AccommodationId: destination,
+      AccommodationId: specificHotelData?.accommodationData?.AccommodationId,
+      Rating: rating,
     };
-    // setFilteringData(payload);
 
-    // 3) kick off search
-    const toastId = toast.loading('Searching…', {
-      style: { fontSize: '1.25rem', padding: '16px 24px' },
-    });
+    localStorage.setItem('payload', JSON.stringify(payload));
 
     specificHotelSearch(payload)
       .then((response) => {
-        // normalize results into an array (even if empty)
-        // const results = response;
-        // console.log('results', response.data.roomData);
-        // 4) save results in context
-        setAllRoomData(response.data.roomData || []);
-        setCart([]); // reset cart
-        // console.log('response1', response.exchangeGroup)
-        // if (!response.exchangeGroup) {
-        //   toast.error("Please complete office profile!", {
-        //     style: { fontSize: "1.25rem", padding: "16px 24px" },
-        //   });
-        //   toast.dismiss(toastId);
-        //   setIsSearching(false)
-        //   return
-        // }
-        // setHotelSearchData(response.data);
-        // setBuyersGroupData(response.buyerGroup);
-        // setExchangeGroupData(response.exchangeGroup);
-        // dismiss loading toast
+        toast.dismiss(toastId);
         setIsSearching(false);
 
-        toast.dismiss(toastId);
-
         if (response.status) {
-          // toast.success("Data searched!", {
-          //   style: { fontSize: "1.25rem", padding: "16px 24px" },
-          // });
-          // 5) navigate only *after* context has been updated
-          // navigate("/search-results");
-          // navigate('/search-results', {
-          //   state: {
-          //     cameFromSearch: true,
-          //     // Optionally pass the actual results or query if you want:
-          //     // searchResults: results,
-          //     // searchCriteria: criteria,
-          //   },
-          // });
+          toast.success('Data searched!', {
+            style: { fontSize: '1.25rem', padding: '16px 24px' },
+          });
+          setSpecificHotelData(response.data);
+          localStorage.setItem(
+            'specificHotelSearchData',
+            JSON.stringify(response.data)
+          );
         } else {
           toast.error('Failed to load hotels', {
             style: { fontSize: '1.25rem', padding: '16px 24px' },
@@ -246,15 +208,11 @@ export default function HotelDetails() {
         }
       })
       .catch((err) => {
-        console.error('Search API failed:', err);
         toast.dismiss(toastId);
-
-        // toast.error("Network error", {
-        //   style: { fontSize: "1.25rem", padding: "16px 24px" },
-        // });
-      })
-      .Finally((err) => {
         setIsSearching(false);
+        toast.error('Error while searching', {
+          style: { fontSize: '1.25rem', padding: '16px 24px' },
+        });
       });
   };
   // Cart helpers
@@ -443,63 +401,6 @@ export default function HotelDetails() {
 
   // Using useTheme from styled-components to access the theme
   const styledTheme = useTheme();
-
-  // // sample data
-  // const hotel = {
-  //   id,
-  //   rating: 7.5,
-  //   ratingText: "Very Good",
-  //   reviews: 234,
-  //   name: "Hotel de Papae Intl",
-  //   details: "3-star hotel with free Wi-Fi & breakfast",
-  //   fromPrice: "PKR 15,651",
-  //   images: [beachImg, mainImg, beachImg],
-  //   roomTypes: [
-  //     {
-  //       id: 1,
-  //       name: "Standard",
-  //       meals: true,
-  //       details: "Standard room with AC and TV",
-  //       cancellation: "Free until 24h",
-  //       totalPrice: "PKR 14,000",
-  //       paymentType: "Pay Later",
-  //     },
-  //     {
-  //       id: 2,
-  //       name: "Deluxe",
-  //       meals: true,
-  //       cancellation: "Free until 48h",
-  //       totalPrice: "PKR 18,000",
-  //       paymentType: "Online Payment",
-  //     },
-  //     {
-  //       id: 3,
-  //       name: "Deluxe",
-  //       meals: true,
-  //       cancellation: "Free until 48h",
-  //       totalPrice: "PKR 18,000",
-  //       paymentType: "Online Payment",
-  //     },
-  //     {
-  //       id: 4,
-  //       name: "Deluxe",
-  //       meals: true,
-  //       cancellation: "Free until 48h",
-  //       totalPrice: "PKR 18,000",
-  //       paymentType: "Online Payment",
-  //     },
-  //     {
-  //       id: 5,
-  //       name: "Deluxe",
-  //       meals: true,
-  //       cancellation: "Free until 48h",
-  //       totalPrice: "PKR 18,000",
-  //       paymentType: "Online Payment",
-  //     },
-  //   ],
-  // };
-
-  // slider settings: show max 2 slides
 
   // Custom arrows
   const PrevArrow = ({ onClick }) => (
@@ -835,36 +736,21 @@ export default function HotelDetails() {
             <Link to="/#/search"> Search</Link>
             &gt; Hotel Details
           </Breadcrumb>
-          <Row1>
-            {/* Destination Section */}
-            {/* <DestinationSection
-            dest={destination}
-            setDest={(city) => setDestination(city)}
+          <FilterSearchCardForSearchPage
+            destination={destination}
+            setDestination={setDestination}
             setCityName={setCityName}
-          /> */}
-
-            {/* Date Selection Section */}
-            <div style={{ width: '60%' }}>
-              <DateSelectionSection
-                onDatesChange={({ checkIn, checkOut, nights }) => {
-                  setDates({ checkIn, checkOut, nights });
-                }}
-              />
-            </div>
-
-            {/* Room Selection Section */}
-            <div style={{ width: '40%' }}>
-              <RoomSelectionComp
-                rooms={roomsInfo}
-                setRooms={(newRooms) => setRoomsInfo(newRooms)}
-              />
-            </div>
-            <div style={{ width: '15%' }}>
-              <SearchButton disabled={isSearching} onClick={handleSearch}>
-                {isSearching ? <Spinner /> : 'Search'}
-              </SearchButton>
-            </div>
-          </Row1>
+            dates={dates}
+            setDates={setDates}
+            roomsInfo={roomsInfo}
+            setRoomsInfo={setRoomsInfo}
+            rating={rating}
+            setRating={setRating}
+            freeCancellation={freeCancellation}
+            setFreeCancellation={setFreeCancellation}
+            isSearching={isSearching}
+            handleSearch={searchSpecificHotel}
+          />
         </TopBar>
 
         <ContentArea>
@@ -1268,6 +1154,7 @@ export default function HotelDetails() {
           />
         </ContentArea>
       </Container_NoGradient>
+      <BlockingOverlay show={isSearching} />
       <FooterSection />
     </>
   );
@@ -1280,7 +1167,7 @@ const TopBar = styled.div`
   left: 0; /* stick to the very left */
   // width: 100%; /* full-width */
   z-index: 1000; /* above everything else */
-  width: 80%;
+  width: 100%;
   background: ${({ theme }) => theme.colors.primary};
   padding: 1rem 2rem;
   border-radius: 0.8rem;
@@ -1294,7 +1181,7 @@ const TopBar = styled.div`
   }
 `;
 const Breadcrumb = styled.div`
-  width: 100%;
+  width: 40%;
   color: ${({ theme }) => theme.colors.whiteText};
   a {
     text-decoration: none;
@@ -1609,4 +1496,14 @@ const ImgThumbnail = styled.img`
   height: 100%;
   object-fit: cover;
   cursor: pointer;
+`;
+
+const BlockingOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 50, 0.2); /* deep translucent overlay */
+  z-index: 9998; /* one layer below the toast */
+  pointer-events: all;
+  display: ${({ show }) => (show ? 'block' : 'none')};
 `;

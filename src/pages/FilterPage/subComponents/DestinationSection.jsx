@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import { AiOutlineClose } from "react-icons/ai";
-import toast from "react-hot-toast";
-import { getCities } from "../../../api/getCities"; // adjust path as needed
+import React, { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+import { AiOutlineClose } from 'react-icons/ai';
+import toast from 'react-hot-toast';
+import { getCities } from '../../../api/getCities'; // adjust path as needed
 
 // Styled components
 const StyledInput = styled.input`
@@ -63,7 +63,7 @@ const SuggestionItem = styled.li`
   background: ${({ highlighted, theme }) =>
     highlighted ? theme.colors.primary : theme.colors.mainBackground};
   color: ${({ highlighted, theme }) =>
-    highlighted ? "#fff" : theme.colors.primaryText};
+    highlighted ? '#fff' : theme.colors.primaryText};
   cursor: pointer;
 
   &:hover {
@@ -77,7 +77,7 @@ export default function DestinationSection({ dest, setDest, setCityName }) {
   const inputRef = useRef(null);
 
   const [cities, setCities] = useState([]);
-  const [displayName, setDisplayName] = useState("");
+  const [displayName, setDisplayName] = useState('');
   const [filtered, setFiltered] = useState([]);
   const [highlight, setHighlight] = useState(-1);
 
@@ -86,10 +86,10 @@ export default function DestinationSection({ dest, setDest, setCityName }) {
     getCities()
       .then(({ status, data }) => {
         if (status && Array.isArray(data)) setCities(data);
-        else toast.error("Failed to load cities");
+        else toast.error('Failed to load cities');
       })
-      .catch(() =>
-        console.log('Network')
+      .catch(
+        () => console.log('Network')
         // toast.error("Network error")
       );
   }, []);
@@ -101,8 +101,8 @@ export default function DestinationSection({ dest, setDest, setCityName }) {
         setFiltered([]);
       }
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   // Set display name from selected dest
@@ -111,7 +111,7 @@ export default function DestinationSection({ dest, setDest, setCityName }) {
       const sel = cities.find((c) => c.AddressId === dest);
       if (sel) setDisplayName(sel.CityName);
     } else if (dest == null) {
-      setDisplayName("");
+      setDisplayName('');
     }
   }, [dest, cities]);
 
@@ -135,18 +135,19 @@ export default function DestinationSection({ dest, setDest, setCityName }) {
   const handleKeyDown = (e) => {
     if (!filtered.length) return;
 
-    if (e.key === "ArrowDown") {
+    if (e.key === 'ArrowDown') {
       e.preventDefault();
       setHighlight((h) => (h + 1) % filtered.length);
-    } else if (e.key === "ArrowUp") {
+    } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setHighlight((h) => (h <= 0 ? filtered.length - 1 : h - 1));
-    } else if (e.key === "Enter" && highlight >= 0) {
+    } else if (e.key === 'Enter' && highlight >= 0) {
       e.preventDefault();
       const choice = filtered[highlight];
       setDisplayName(choice.CityName);
+
       setDest(choice.AddressId);
-      setFiltered([]); // ✅ close dropdown
+      setFiltered([]);
     }
   };
 
@@ -159,14 +160,16 @@ export default function DestinationSection({ dest, setDest, setCityName }) {
         onChange={(e) => {
           setDisplayName(e.target.value);
           const q = e.target.value.toLowerCase();
-          setFiltered(cities.filter((c) => c.CityName.toLowerCase().includes(q)));
+          setFiltered(
+            cities.filter((c) => c.CityName.toLowerCase().includes(q))
+          );
         }}
         onKeyDown={handleKeyDown}
       />
       {displayName && (
         <ClearIcon
           onClick={() => {
-            setDisplayName("");
+            setDisplayName('');
             setDest(null);
             inputRef.current?.focus();
           }}
@@ -180,10 +183,10 @@ export default function DestinationSection({ dest, setDest, setCityName }) {
               highlighted={i === highlight}
               onMouseEnter={() => setHighlight(i)}
               onMouseDown={(e) => {
-                e.preventDefault(); // 👈 prevent refocus
+                e.preventDefault();
                 setDisplayName(c.CityName);
                 setDest(c.AddressId);
-                setFiltered([]); // ✅ force dropdown to close
+                setFiltered([]);
               }}
             >
               {c.CityName}

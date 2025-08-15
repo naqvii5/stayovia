@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import logoSrc from '../../../assets/StayoViaLogo.png';
-import playStore from '../../../assets/playStore.png';
-import appStore from '../../../assets/appStore.png';
+// import playStore from '../../../assets/playStore.png';
+// import appStore from '../../../assets/appStore.png';
 import Stores from '../../../assets/stores.png';
 import ComingSoon from '../../../assets/comingSoonRibbon.png';
 
@@ -66,6 +66,15 @@ const Payments = styled.div`
   display: flex;
   gap: 0.75rem;
   font-size: 24px;
+`;
+const SectionMid = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justifycontent: space-between;
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    flex-direction: column;
+  }
 `;
 
 const BottomBar = styled.div`
@@ -219,10 +228,33 @@ const ModalHeading = styled.h2`
   margin-bottom: 1rem;
 `;
 
-const ModalContent = styled.p`
+const ModalContent = styled.div`
   font-size: ${({ theme }) => theme.fontSizes.xsmall};
   line-height: 1.5;
   white-space: pre-line;
+`;
+// at top of file, alongside your other styled components
+const SectionTitle = styled.h3`
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: ${({ theme }) => theme.fontSizes.small};
+  margin: 1rem 0 0.5rem;
+`;
+
+const SectionText = styled.p`
+  color: ${({ theme }) => theme.colors.primaryText};
+  font-size: ${({ theme }) => theme.fontSizes.xsmall};
+  line-height: 1.5;
+  margin: 0.5rem 0;
+`;
+
+const BulletList = styled.ul`
+  margin: 0.5rem 0 1rem 1.5rem;
+  list-style: disc;
+  color: ${({ theme }) => theme.colors.primaryText};
+  font-size: ${({ theme }) => theme.fontSizes.xsmall};
+  li {
+    margin-bottom: 0.25rem;
+  }
 `;
 
 export default function FooterSection() {
@@ -242,13 +274,293 @@ export default function FooterSection() {
   const getModalText = (type) => {
     switch (type) {
       case 'Privacy Policy':
-        return `Effective Date: June 01, 2025\nLast Updated: June 21, 2025\nAt Stayovia, your privacy is our priority. We are committed to protecting your personal information and providing you with a secure online booking experience.\n\nInformation We Collect\n- Personal details (name, email, phone, etc.) for booking purposes\n- Payment details processed via secure third-party gateways\n- Booking history and preferences\n- Technical data (IP, device type, browser info, etc.)\n\nHow We Use Your Information\n- To process and confirm bookings\n- To communicate booking updates or support messages\n- To improve our services and user experience\n- To comply with legal or regulatory requirements\n\nSharing of Information\nWe do not sell or rent your personal information. We may share necessary data with:\n- Our accommodation partners (for booking confirmation)\n- Payment gateways and fraud prevention services\n- Regulatory authorities where required\n\nData Security\nWe use industry-standard security protocols to protect your data. Sensitive information is encrypted in transit and at rest.\n\nYour Rights\nYou may request access to your data, ask for correction, or request deletion by contacting us at: reach@stayovia.com`;
+        return (
+          <>
+            <SectionTitle>Introduction</SectionTitle>
+            <SectionText>
+              Stayovia is a travel tech brand of Purple Technologies (Pvt) Ltd,
+              is committed to protecting your privacy. This policy outlines how
+              we collect, use, and protect your personal information.
+            </SectionText>
+
+            <SectionTitle>Information Collection</SectionTitle>
+            <BulletList>
+              <li>
+                <strong>Personal Information:</strong> We collect your name,
+                email address, and phone number when you make a booking.
+              </li>
+              <li>
+                <strong>Usage Data:</strong> We may collect info on how you use
+                our booking engine: IP, browser, pages visited.
+              </li>
+            </BulletList>
+
+            <SectionTitle>Use of Information</SectionTitle>
+            <BulletList>
+              <li>
+                <strong>Booking and Reservation:</strong> Used to process and
+                confirm your booking.
+              </li>
+              <li>
+                <strong>Communication:</strong> To send confirmations, updates,
+                promos.
+              </li>
+              <li>
+                <strong>Improvement:</strong> Usage data helps us improve our
+                UX.
+              </li>
+            </BulletList>
+
+            <SectionTitle>Data Protection</SectionTitle>
+            <SectionText>
+              We implement industry-standard security measures to guard your
+              personal information against unauthorized access, alteration,
+              disclosure, or destruction.
+            </SectionText>
+
+            <SectionTitle>Third-Party Disclosure</SectionTitle>
+            <SectionText>
+              We do not sell, trade, or otherwise transfer your personal
+              information to outside parties except to the hotel with which you
+              are making a booking.
+            </SectionText>
+
+            <SectionTitle>Your Rights</SectionTitle>
+            <SectionText>
+              You have the right to access, correct, or delete your personal
+              information. You may also opt-out of receiving promotional
+              communications.
+            </SectionText>
+
+            <SectionTitle>Changes to the Policy</SectionTitle>
+            <SectionText>
+              We may update this policy from time to time. Any changes will be
+              posted on this page.
+            </SectionText>
+          </>
+        );
       case 'Terms & Conditions':
-        return `Welcome to Stayovia. By using our platform, you agree to the following terms.\n\n1. Use of the Website\nStayovia allows users to search and book accommodations globally. By booking through our platform, you enter into a direct contractual relationship with the selected accommodation provider.\n\n2. Prices & Payments\nWe strive to offer rates lower than other major OTAs. Prices include all taxes unless stated otherwise. All payments are processed securely via third-party payment providers.\n\n3. Booking Confirmation\nAll bookings are confirmed instantly or via email within a few minutes. If any discrepancies arise, please contact our team at reach@stayovia.com within 24 hours.\n\n4. Cancellations & Refunds\nCancellation policies vary by property and are displayed clearly before booking. Refunds, where applicable, will be processed according to the cancellation policy shown.\n\n5. Platform Liability\nStayovia is not responsible for the quality, service, or condition of accommodations listed. However, we are committed to ensuring fair practices and will intervene in disputes when needed.\n\n6. User Responsibilities\nYou agree to:\n- Provide accurate booking details\n- Not use the site for fraudulent activity\n- Comply with the property’s terms during your stay\n\n7. Changes to Terms\nWe reserve the right to update these terms at any time. Changes will be published on this page with a new effective date.`;
+        return (
+          <>
+            <SectionTitle>Introduction</SectionTitle>
+            <SectionText>
+              Welcome to Stayovia, a trevel tech brand of Purple Technologies
+              Pvt Ltd. By accessing or using our travel portal, you agree to
+              comply with and be bound by these Terms and Conditions. Please
+              review them carefully before making a booking.
+            </SectionText>
+            <SectionTitle>Definitions</SectionTitle>
+            <BulletList>
+              <li>
+                <strong>Stayovia:</strong> The travel portal developed by Purple
+                Technologies Pvt Ltd.
+              </li>
+              <li>
+                <strong>Hotel:</strong> The accommodation provider using
+                Stayovia for direct bookings.
+              </li>
+              <li>
+                <strong>Guest:</strong>The person making a booking through
+                Stayovia.
+              </li>
+            </BulletList>
+            <SectionTitle>Booking Process</SectionTitle>
+            <BulletList>
+              <li>
+                <strong>Availability and Pricing:</strong>
+                All bookings are subject to availability and the hotel’s terms
+                and conditions. Prices are subject to change without prior
+                notice until a booking is confirmed.
+              </li>
+              <li>
+                <strong>Confirmation: </strong> A booking is confirmed when you
+                receive an email confirmation with a reservation voucher.
+              </li>
+              <li>
+                <strong>Payment:</strong> Full payment or a deposit, as
+                specified during the booking process, must be made to secure a
+                reservation.
+              </li>
+            </BulletList>
+            <SectionTitle>Cancellation and Refund</SectionTitle>
+            <BulletList>
+              <li>
+                <strong>Refundable Rates:</strong>
+                Bookings made under refundable rates can be canceled as per the
+                hotel’s cancellation policy, and the applicable refund will be
+                processed.
+              </li>
+              <li>
+                <strong>Non-Refundable Rates: </strong> Bookings made under
+                non-refundable rates cannot be canceled or refunded.
+              </li>
+              <li>
+                <strong>No-Shows:</strong> Failure to arrive at the hotel on the
+                scheduled check-in date will be treated as a no-show, and no
+                refund will be issued.
+              </li>
+            </BulletList>
+
+            <SectionTitle>Amendments</SectionTitle>
+            <BulletList>
+              <li>
+                {/* <strong>Refundable Rates:</strong> */}
+                Changes to bookings are subject to availability and the hotel’s
+                amendment policies. Additional charges may apply.
+              </li>
+            </BulletList>
+            <SectionTitle>Liability</SectionTitle>
+            <BulletList>
+              <li>
+                {/* <strong>Refundable Rates:</strong> */}
+                Purple Technologies Pvt Ltd is not responsible for any loss or
+                damage incurred by the guest due to circumstances beyond our
+                control, including but not limited to, natural disasters,
+                strikes, or governmental actions.
+              </li>
+            </BulletList>
+            <SectionTitle>Governing Law</SectionTitle>
+            <BulletList>
+              <li>
+                {/* <strong>Refundable Rates:</strong> */}
+                These terms and conditions are governed by the laws of Pakistan.
+                Any disputes arising from these terms and conditions will be
+                subject to the exclusive jurisdiction of the courts in Pakistan.
+              </li>
+            </BulletList>
+          </>
+        );
       case 'Frequently Asked Questions':
         return `1. What is Stayovia?\nStayovia is an online travel agency (OTA) offering affordable accommodations with lower prices than Booking.com and Expedia, powered by direct Google Travel integration.\n\n2. How is Stayovia cheaper than other OTAs?\nWe work on slimmer commission models, avoid heavy advertising, and pass the savings directly to travelers.\n\n3. How do I know my booking is confirmed?\nYou will receive a confirmation email instantly after payment. If not received within 10 minutes, contact us at reach@stayovia.com.\n\n4. Can I cancel or change my booking?\nYes — but cancellation and change policies vary by property. Always review the cancellation policy shown before booking.\n\n5. Who should I contact for help?\nReach us anytime at reach@stayovia.com or WhatsApp/Call at +92 334 1787753.\n\n6. How do I know the property is genuine?\nAll listings are vetted and monitored via Google and partner systems. Reviews and ratings help ensure quality.\n\n7. Do you offer support in case of a problem during stay?\nYes. In case of issues during your stay, reach us and we’ll try to resolve the matter directly with the property on your behalf.`;
-      case 'Contact Us':
-        return `We’re here to help with all your booking and travel needs.\n\nEmail: reach@stayovia.com\nPhone: +92 334 1787753\nWebsite: www.stayovia.com\nSupport Hours: Monday–Saturday, 10 AM to 10 PM (GMT+5)`;
+      case 'Support':
+        return (
+          <>
+            <SectionTitle>Support</SectionTitle>
+            <SectionText>
+              At Purple Technologies, we are committed to providing our
+              customers and partners with a transparent and fair process to
+              raise and resolve complaints efficiently.
+            </SectionText>
+
+            <SectionTitle>Business Hours</SectionTitle>
+            <SectionText>
+              Monday to Saturday
+              <br />
+              0900–1800 hours (GMT+5)
+            </SectionText>
+
+            <SectionTitle>Contact Details</SectionTitle>
+            <BulletList>
+              <li>
+                <strong>Email:</strong> reach@purpletech.ai
+              </li>
+              <li>
+                <strong>Phone:</strong> +92 334 1PURPLE (787753)
+              </li>
+            </BulletList>
+
+            <SectionTitle>Our Commitments</SectionTitle>
+            <BulletList>
+              <li>Acknowledge all complaints within 1 business day</li>
+              <li>
+                Provide a resolution or meaningful update within 3 to 5 business
+                days
+              </li>
+              <li>
+                Keep you informed throughout the process until the matter is
+                resolved
+              </li>
+            </BulletList>
+
+            <SectionText>
+              If your issue requires more time, we will notify you of the
+              expected timeline.
+            </SectionText>
+          </>
+        );
+      case 'Cancellation Policy':
+        return (
+          <>
+            <SectionTitle>Introduction</SectionTitle>
+            <SectionText>
+              Stayovia provides flexible cancellation policies to accommodate
+              our guests’ needs. The cancellation policy varies based on the
+              rate plan booked.
+            </SectionText>
+
+            <SectionTitle>Refundable Rates</SectionTitle>
+            <BulletList>
+              <li>
+                <strong>Cancellation Period:</strong> Cancellations made within
+                the specified period in the booked rate plan before the check-in
+                date are eligible for a full refund.
+              </li>
+              <li>
+                <strong>Method:</strong> Cancellations must be made through the
+                Stayovia platform.
+              </li>
+            </BulletList>
+
+            <SectionTitle>Non-Refundable Rates</SectionTitle>
+            <SectionText>
+              No cancellations or refunds are permitted for bookings made under
+              non-refundable rate plans.
+            </SectionText>
+
+            <SectionTitle>Specific Hotel Policies</SectionTitle>
+            <SectionText>
+              Each hotel may have its own specific cancellation policy, which
+              will be displayed during booking and included in your reservation
+              voucher.
+            </SectionText>
+
+            <SectionTitle>Confirmation</SectionTitle>
+            <SectionText>
+              Upon cancellation, you will receive a confirmation email outlining
+              the details of your canceled booking and any applicable refunds.
+            </SectionText>
+          </>
+        );
+      case 'Refund Policy':
+        return (
+          <>
+            <SectionTitle>Introduction</SectionTitle>
+            <SectionText>
+              Stayovia aims to provide a clear and fair refund policy to all our
+              guests. The refund policy is based on the type of rate plan
+              booked.
+            </SectionText>
+
+            <SectionTitle>Refundable Rates</SectionTitle>
+            <BulletList>
+              <li>
+                <strong>Cancellation:</strong> If you cancel a booking made
+                under a refundable rate plan within the specified period, a full
+                refund will be issued.
+              </li>
+              <li>
+                <strong>Process:</strong> Refunds will be processed within 7–10
+                business days to the original payment method used.
+              </li>
+            </BulletList>
+
+            <SectionTitle>Non-Refundable Rates</SectionTitle>
+            <SectionText>
+              No refunds for bookings under non-refundable rate plans.
+            </SectionText>
+
+            <SectionTitle>Partial Refunds</SectionTitle>
+            <SectionText>
+              In certain circumstances, such as early check-out or booking
+              modifications, partial refunds may be issued at the hotel’s
+              discretion.
+            </SectionText>
+
+            <SectionTitle>No-Show</SectionTitle>
+            <SectionText>No refunds will be issued for no-shows.</SectionText>
+          </>
+        );
+
       default:
         return '';
     }
@@ -259,14 +571,15 @@ export default function FooterSection() {
       <FooterContent>
         <BrandColumn>
           <Logo src={logoSrc} alt="Logo" />
-          <div
+          {/* <div
             style={{
               display: 'flex',
               flexDirection: 'row',
               width: '100%',
               justifyContent: 'space-between',
             }}
-          >
+          > */}
+          <SectionMid>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <Description>
                 Stayovia is a travel tech brand of Purple Technologies (Pvt) Ltd
@@ -295,22 +608,8 @@ export default function FooterSection() {
               </StoreIconWrapper>
             </AppIcons>
 
-            {/* <AppIcons>
-              {[
-                { src: appStore, alt: "App Store", width: 120, opacity: 0.2 },
-                { src: playStore, alt: "Google Play", width: 138, opacity: 0.3 }
-              ].map(({ src, alt, width, opacity }) => (
-                <StoreIconWrapper key={alt}>
-                  <img
-                    src={src}
-                    alt={alt}
-                    style={{ width: `${width}px`, display: "block", opacity: `${opacity}` }}
-                  />
-                  <Ribbon src={commingSoon} alt="Coming Soon" />
-                </StoreIconWrapper>
-              ))}
-            </AppIcons> */}
-          </div>
+            {/* </div> */}
+          </SectionMid>
         </BrandColumn>
       </FooterContent>
 
@@ -327,18 +626,20 @@ export default function FooterSection() {
           >
             Purple Technologies
           </LinkItem>
-          <LinkItem onClick={() => setModalType('Privacy Policy')}>
-            Privacy
-          </LinkItem>
+          {/* <br></br> */}
           <LinkItem onClick={() => setModalType('Terms & Conditions')}>
             Terms & Conditions
           </LinkItem>
-          <LinkItem onClick={() => setModalType('Frequently Asked Questions')}>
-            FAQ
+          <LinkItem onClick={() => setModalType('Privacy Policy')}>
+            Privacy Policy
           </LinkItem>
-          <LinkItem onClick={() => setModalType('Contact Us')}>
-            Contact Us
+          <LinkItem onClick={() => setModalType('Refund Policy')}>
+            Refund Policy
           </LinkItem>
+          <LinkItem onClick={() => setModalType('Cancellation Policy')}>
+            Cancellation Policy
+          </LinkItem>
+          <LinkItem onClick={() => setModalType('Support')}>Support</LinkItem>
         </div>
       </BottomBar>
 
