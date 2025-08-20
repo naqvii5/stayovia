@@ -2,12 +2,32 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FiAlertCircle } from 'react-icons/fi';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+// useNavigate
 import Container_NoGradient from '../../components/Container_NoGradient';
 import Header from '../../components/Header';
 import FooterSection from '../Login/subcomponents/FooterSection';
 
 // —————————————————————————————————————————————————————————————
+const Container = styled.section`
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px 100px 0 100px;
+  background: ${({ theme }) => theme.colors.primary};
+  // background: linear-gradient(
+  //   to top,
+  //   ${({ theme }) => theme.colors.primary} 0%,
+  //   ${({ theme }) => theme.colors.secondary} 100%
+  // );
+  color: ${({ theme }) => theme.colors.primaryText};
+  box-sizing: border-box;
+  overflow: hidden;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    padding: 10px 10px 0 10px;
+  }
+`;
 // Styled Components
 const TopBar = styled.div`
   width: max-content;
@@ -91,12 +111,14 @@ const Button = styled.button`
 // —————————————————————————————————————————————————————————————
 
 export default function BookingFailed() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   return (
     <>
-      <Container_NoGradient>
+      <Container>
         <Header />
+      </Container>
+      <Container_NoGradient>
         <TopBar>
           <Breadcrumb>
             <Link to="/">Main Page</Link> &gt;
@@ -117,9 +139,9 @@ export default function BookingFailed() {
             {/* <Button primary onClick={() => navigate(-1)}>
               Retry Booking
             </Button> */}
-            <Button onClick={() => window.open('mailto:support@example.com')}>
+            {/* <Button onClick={() => window.open('mailto:support@example.com')}>
               <p>Contact Support</p>
-            </Button>
+            </Button> */}
           </Actions>
         </Content>
       </Container_NoGradient>

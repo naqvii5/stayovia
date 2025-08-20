@@ -10,7 +10,7 @@ import Container_NoGradient from '../../components/Container_NoGradient';
 import Header from '../../components/Header';
 import FooterSection from '../Login/subcomponents/FooterSection';
 import RightColumnSection from '../HotelDetails/subcomponents/RightColumnSection';
-import { useTheme } from 'styled-components';
+// import { useTheme } from 'styled-components';
 import { useHotelSearch } from '../../context/HotelSearchContext';
 import { createBooking } from '../../api/createBooking';
 import toast from 'react-hot-toast';
@@ -36,7 +36,7 @@ const multiBookingSchema = z.object({
 
 // ————— Component —————
 export default function CheckOut() {
-  const styledTheme = useTheme();
+  // const styledTheme = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const { grandTotal, grandTotalWithBuyersGroup } = useHotelSearch();
@@ -63,16 +63,17 @@ export default function CheckOut() {
   // const [grandTotal] = useState(
   //   Number(localStorage.getItem("grandTotal") || 0)
   // );
-  const { filteringData } = useHotelSearch();
+  // const { filteringData } = useHotelSearch();
   const numberOfGuests = bookingData.totalGuests;
   // console.log("bookingData", bookingData);
 
   const {
-    register,
+    // register,
     control,
-    handleSubmit,
+    // handleSubmit,
     watch,
     setValue,
+    // eslint-disable-next-line no-unused-vars
     formState: { errors },
   } = useForm({
     resolver: zodResolver(multiBookingSchema),
@@ -101,62 +102,83 @@ export default function CheckOut() {
         setValue(`guests.${idx + 1}`, guests[0]);
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applyAll, guests[0], fields, setValue]);
 
-  const submitForm = (data) => {
+  // — inside CheckOut.jsx
+  const submitForm = ({ firstName, lastName, email, phone, paymentMethod }) => {
     const payload = {
       accommodationId: bookingData.AccommodationId,
       checkIn: bookingData.CheckIn,
       checkOut: bookingData.CheckOut,
-      guestInfo: data.guests,
-      email: data.email,
-      phone: data.phone,
+
+      // ⬇️ Use GuestForm data in required keys
+      FirstName: firstName?.trim(),
+      LastName: lastName?.trim(),
+      Email: email?.trim(),
+      PhoneNo: phone,
+
       country: 'pakistan',
       bookingSource: 'bedandbeds',
       grandTotal,
-      grandTotalWithBuyersGroup: grandTotalWithBuyersGroup,
+      grandTotalWithBuyersGroup,
       rooms: cart,
-      buyerGroupId: cartDetails.buyerGroupId,
-      marginApplied: cartDetails.marginApplied,
-      isRefundable: cartDetails.isRefundable,
-      cancellationDeadline: cartDetails.cancellationDeadline,
+
+      // extra context you were already sending
+      buyerGroupId: cartDetails?.buyerGroupId ?? null,
+      marginApplied: cartDetails?.marginApplied ?? false,
+      isRefundable: cartDetails?.isRefundable ?? null,
+      cancellationDeadline: cartDetails?.cancellationDeadline ?? null,
+
+      paymentMethod: paymentMethod ?? 'credits',
     };
-    // console.log("Booking Payload:", payload);
+
     createBookingAPI(payload);
-    // navigate("/confirmed");
   };
 
   const createBookingAPI = (payload) => {
     // 1) validate
-    if (payload.guestInfo == '') {
-      toast.error('Data is missing!', {
+    if (
+      !payload.FirstName ||
+      !payload.LastName ||
+      !payload.Email ||
+      !payload.PhoneNo
+    ) {
+      toast.error('Please fill in First Name, Last Name, Email, and Phone.', {
         style: { fontSize: '1.25rem', padding: '16px 24px' },
       });
       return;
     }
-    // console.log("payload", payload);
-    // 3) kick off search
+
     const toastId = toast.loading('Confirming....!', {
       style: { fontSize: '1.25rem', padding: '16px 24px' },
     });
 
     createBooking(payload)
       .then((response) => {
-        // normalize results into an array (even if empty)
-        // const results = status && data;
-        // console.log("results", response);
-        const status = response.status;
-        // 4) save results in context
         localStorage.setItem('booking data', JSON.stringify(response));
-
-        // dismiss loading toast
+        localStorage.setItem('grandTotal', JSON.stringify(grandTotal));
         toast.dismiss(toastId);
+        // eslint-disable-next-line no-unused-vars
+        const { status, message, paymentUrl, bookingPin, confirmationCode } =
+          response;
 
         if (status) {
-          toast.success(response.message, {
-            style: { fontSize: '1.25rem', padding: '16px 24px' },
-          });
-          navigate('/confirmed');
+          localStorage.setItem(
+            'bookingConfirmationCode',
+            JSON.stringify(confirmationCode)
+          );
+          if (paymentUrl) {
+            // Optional tiny toast so users know what's happening
+            toast.success('Redirecting to secure payment…', {
+              style: { fontSize: '1.1rem', padding: '12px 18px' },
+              autoClose: 1200,
+            });
+            console.log('response', response);
+            // Same-tab redirect to the gateway
+            window.location.assign(paymentUrl);
+            return; // stop here
+          }
         } else {
           toast.error(response.message, {
             style: { fontSize: '1.25rem', padding: '16px 24px' },
@@ -171,6 +193,7 @@ export default function CheckOut() {
         });
       });
   };
+
   return (
     <>
       <Container>

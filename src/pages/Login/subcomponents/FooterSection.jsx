@@ -22,7 +22,9 @@ const Container = styled.footer`
   );
   color: ${({ theme }) => theme.colors.primaryText};
   box-sizing: border-box;
-  overflow: hidden;
+
+  /* Avoid chopping text on the right */
+  overflow: visible;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     padding: 20px;
@@ -70,16 +72,8 @@ const Payments = styled.div`
   gap: 0.75rem;
   font-size: 24px;
 `;
-const SectionMid = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justifycontent: space-between;
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    flex-direction: column;
-  }
-`;
-
+// 1) Fix SectionMid and make desktop row layout spaced
+// Keep BottomBar left-aligned on mobile; allow wrapping overall
 const BottomBar = styled.div`
   margin-top: 2rem;
   border-top: 1px solid ${({ theme }) => theme.colors.primary};
@@ -87,36 +81,95 @@ const BottomBar = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  text-align: center;
-  font-family: ${({ theme }) => theme.fonts.primaryText};
-  font-size: ${({ theme }) => theme.fontSizes.xsmall};
+  align-items: flex-start; /* left on mobile */
+  text-align: left;
+  flex-wrap: wrap; /* avoid overflow */
 
   @media (min-width: ${({ theme }) => theme.breakpoints.tablet}) {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    text-align: left;
   }
 `;
 
+// Remove margin-left so wrapped lines start flush-left; spacing handled by gaps
 const LinkItem = styled.span`
   font-family: ${({ theme }) => theme.fonts.primaryText};
   font-size: ${({ theme }) => theme.fontSizes.xsmall};
   color: ${({ theme }) => theme.colors.primary};
   text-decoration: none;
-  margin-left: 10px;
   cursor: pointer;
 
   &:hover {
     text-decoration: underline;
   }
 `;
+const LegalGroup = styled.div`
+  display: flex;
+  flex-direction: column; /* mobile: legal line, then links */
+  align-items: flex-start;
+  gap: 0.4rem;
+  min-width: 0;
 
+  @media (min-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    flex-direction: row; /* tablet+: inline */
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap; /* wrap to next row instead of overflowing */
+  }
+`;
+
+/* Keep the legal sentence compact on desktop, but allow wrap on small.
+   NOTE: Avoid inline-flex here; it resists wrapping. */
+const LegalLine = styled.span`
+  font-family: ${({ theme }) => theme.fonts.primaryText};
+  font-size: ${({ theme }) => theme.fontSizes.xsmall};
+  display: inline; /* allow text to wrap normally */
+  white-space: normal; /* mobile: can wrap if needed */
+  overflow-wrap: anywhere;
+  min-width: 0;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    white-space: nowrap; /* tablet+: keep the legal sentence on one line */
+  }
+`;
+
+/* Inline link inside the legal line; don’t split the company name */
+const InlineLink = styled(LinkItem)`
+  display: inline;
+  white-space: nowrap;
+`;
+
+/* Links row wraps as needed (both mobile and when desktop gets tight) */
+const LinksRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+  min-width: 0;
+`;
+
+const SectionMid = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between; /* <-- typo fixed */
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+`;
+
+// 3) (Optional) Make the store image wrapper responsive
 const StoreIconWrapper = styled.div`
   position: relative;
   display: inline-block;
-  width: 350px; /* matches your badge width */
-  overflow: visible; /* ensure ribbon can stick out */
+  width: 100%;
+  max-width: 350px; /* was fixed width */
+  overflow: visible;
 `;
 
 const StoreImage = styled.img`
@@ -148,11 +201,17 @@ const RibbonRight = styled.img`
   // transform: rotate(-12deg);
   // transform-origin: bottom left;
 `;
+// 2) On desktop, push AppIcons to the right end
 const AppIcons = styled.div`
   display: flex;
   gap: 0.75rem;
   align-items: center;
   margin-top: 0.5rem;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    margin-left: auto; /* <-- this sends it to the far right */
+    margin-top: 0; /* tidy spacing on desktop */
+  }
 `;
 const SocialIcons = styled.div`
   display: flex;
@@ -628,28 +687,34 @@ export default function FooterSection() {
           <PaymentLogo src={UP} alt="UnionPay" />
           <PaymentLogo src={Visa} alt="Visa" />
         </Payments>
-        <div>
-          © {new Date().getFullYear()} Stayovia. All rights reserved
-          <LinkItem
-            onClick={() => window.open('https://purpletech.ai/', '_blank')}
-          >
-            Purple Technologies
-          </LinkItem>
-          {/* <br></br> */}
-          <LinkItem onClick={() => setModalType('Terms & Conditions')}>
-            Terms & Conditions
-          </LinkItem>
-          <LinkItem onClick={() => setModalType('Privacy Policy')}>
-            Privacy Policy
-          </LinkItem>
-          <LinkItem onClick={() => setModalType('Refund Policy')}>
-            Refund Policy
-          </LinkItem>
-          <LinkItem onClick={() => setModalType('Cancellation Policy')}>
-            Cancellation Policy
-          </LinkItem>
-          <LinkItem onClick={() => setModalType('Support')}>Support</LinkItem>
-        </div>
+        <LegalGroup>
+          <LegalLine>
+            © {new Date().getFullYear()} Stayovia. All rights reserved{' '}
+            <InlineLink
+              onClick={() => window.open('https://purpletech.ai/', '_blank')}
+            >
+              <NoWrap>Purple Technologies (Pvt) Ltd</NoWrap>
+            </InlineLink>
+          </LegalLine>
+
+          <LinksRow>
+            <LinkItem onClick={() => setModalType('Terms & Conditions')}>
+              <NoWrap>Terms & Conditions</NoWrap>
+            </LinkItem>
+            <LinkItem onClick={() => setModalType('Privacy Policy')}>
+              <NoWrap>Privacy Policy</NoWrap>
+            </LinkItem>
+            <LinkItem onClick={() => setModalType('Refund Policy')}>
+              <NoWrap>Refund Policy</NoWrap>
+            </LinkItem>
+            <LinkItem onClick={() => setModalType('Cancellation Policy')}>
+              <NoWrap>Cancellation Policy</NoWrap>
+            </LinkItem>
+            <LinkItem onClick={() => setModalType('Support')}>
+              <NoWrap>Support</NoWrap>
+            </LinkItem>
+          </LinksRow>
+        </LegalGroup>
       </BottomBar>
 
       {modalType && (

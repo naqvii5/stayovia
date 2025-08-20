@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { MyButton } from '../../../components/MyButton';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { useTheme } from 'styled-components';
-import { usePermissions } from '../../../context/PermissionsContext';
+// import { usePermissions } from '../../../context/PermissionsContext';
 
+// eslint-disable-next-line no-unused-vars
 function GuestForm({ numberOfGuests, submitForm }) {
   const theme = useTheme();
-  const { permissions, hasPermission } = usePermissions();
+  // const { permissions, hasPermission } = usePermissions();
 
+  // eslint-disable-next-line no-unused-vars
   const [paymentMethod, setPaymentMethod] = useState('credits');
   const [modalType, setModalType] = useState(null);
 
@@ -37,6 +39,10 @@ function GuestForm({ numberOfGuests, submitForm }) {
               Pvt Ltd. By accessing or using our travel portal, you agree to
               comply with and be bound by these Terms and Conditions. Please
               review them carefully before making a booking.
+            </SectionText>
+            <SectionTitle>Address:</SectionTitle>
+            <SectionText>
+              3rd Floor, Block 9-E, F-6 Markaz, Super Market, Islamabad.
             </SectionText>
             <SectionTitle>Definitions</SectionTitle>
             <BulletList>
@@ -125,6 +131,7 @@ function GuestForm({ numberOfGuests, submitForm }) {
     }
   };
   // ————— Validation Schemas —————
+  // eslint-disable-next-line no-unused-vars
   const bookingSchema = z.object({
     title: z.enum(['Mr', 'Ms', 'Mrs'], { message: 'Please select a title' }),
     firstName: z.string().min(1, 'First name is required'),
@@ -147,8 +154,8 @@ function GuestForm({ numberOfGuests, submitForm }) {
     register,
     control,
     handleSubmit,
-    watch,
-    setValue,
+    // watch,
+    // setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(multiBookingSchema),
@@ -211,7 +218,8 @@ function GuestForm({ numberOfGuests, submitForm }) {
             control={control}
             rules={{ required: 'Phone number is required' }}
             render={({ field: { value, onChange }, fieldState: { error } }) => (
-              <div style={{ width: '50%' }}>
+              // <div style={{ width: '50%' }}>
+              <PhoneInputDiv>
                 <h3>Phone</h3>
                 <PhoneInput
                   country="pk"
@@ -249,7 +257,8 @@ function GuestForm({ numberOfGuests, submitForm }) {
                   }}
                 />
                 {error && <Error>{error.message}</Error>}
-              </div>
+                {/* </div> */}
+              </PhoneInputDiv>
             )}
           />
         </Row>
@@ -440,6 +449,15 @@ const Row = styled.div`
   & > label {
     flex: 1;
   }
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    flex-direction: column;
+  }
+`;
+const PhoneInputDiv = styled.div`
+  width: 50%;
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    width: 100%;
+  }
 `;
 
 const GuestsWrapper = styled.div`
@@ -504,7 +522,7 @@ const CheckboxWrapper = styled.div`
   display: flex;
   align-items: center;
   padding: 1rem;
-  gap: 1.5rem;
+  gap: 0.2rem;
   font-size: ${({ theme }) => theme.fontSizes.base};
   input {
     width: auto;
